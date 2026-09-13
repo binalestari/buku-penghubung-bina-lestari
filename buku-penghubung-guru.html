@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Buku Penghubung Harian - Bina Lestari</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f8fc;color:#172b3f}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0b5d7b;color:#fff}.brand{text-align:center;padding:18px 12px;border-bottom:1px solid #ffffff25}.logo{width:72px;height:72px;background:#fff;border-radius:14px;padding:5px}.brand-title{font-size:20px;font-weight:700;margin-top:8px}.brand-sub{font-size:11px}.menu-title{font-size:10px;font-weight:700;letter-spacing:1px;padding:18px 14px 7px;opacity:.65}.menu-item{display:flex;gap:10px;align-items:center;padding:11px 14px;margin:3px 8px;border-radius:9px;color:#fff;text-decoration:none;font-size:13px}.menu-item:hover,.menu-item.active{background:#ffffff22}.icon{width:24px;text-align:center}
+.main{margin-left:230px;min-height:100vh}.topbar{height:64px;background:#fff;border-bottom:1px solid #e5ebf0;display:flex;justify-content:space-between;align-items:center;padding:0 28px}.title{font-size:20px;font-weight:700}.teacher{display:flex;gap:9px;align-items:center}.teacher-text{text-align:right;font-size:12px}.role{font-size:10px;color:#7b8794}.avatar{width:38px;height:38px;border-radius:50%;background:#168fe8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content{padding:28px;max-width:1120px}.heading{margin-bottom:18px}.heading h1{font-size:24px;margin:0 0 5px}.heading p{font-size:13px;color:#71808e;margin:0}.card{background:#fff;border:1px solid #dfe8ef;border-radius:14px;padding:22px}.student{background:#f3f9fd;border:1px solid #d7eaf7;border-radius:10px;padding:15px;margin-bottom:18px}.student-name{font-size:19px;font-weight:700}.student-meta{font-size:11px;color:#71808e;margin-top:4px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.info{margin-bottom:18px}label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}input,textarea,select{width:100%;border:1px solid #d5e1e9;border-radius:8px;padding:10px;font:13px Arial;outline:none;background:#fff}input,select{height:42px}textarea{min-height:105px;resize:vertical}input:focus,textarea:focus,select:focus{border-color:#168fe8}
+.activity{border:1px solid #dfe8ef;border-radius:11px;padding:17px;margin-top:14px}.head{display:flex;gap:10px;align-items:center;margin-bottom:12px}.num{width:30px;height:30px;border-radius:50%;background:#168fe8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}.activity h2{font-size:15px;margin:0}.hint{font-size:11px;color:#71808e;margin-top:2px}.example{font-size:11px;color:#8a98a5;background:#f8fafc;border-radius:7px;padding:8px;margin-bottom:9px;line-height:1.45}
+.attitudes{display:flex;flex-wrap:wrap;gap:8px}.att{display:flex;align-items:center;gap:6px;border:1px solid #d5e1e9;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:normal}.att input{width:auto;height:auto}
+.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.btn{border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}.back{background:#edf2f6;color:#425466}.draft{background:#fff1d9;color:#8a5a00}.send{background:#168fe8;color:#fff}.btn:disabled{opacity:.6;cursor:not-allowed}.notice{background:#f3f9fd;border:1px solid #d7eaf7;border-radius:9px;padding:11px;font-size:11px;color:#527087;line-height:1.5;margin-top:16px}
+@media(max-width:800px){.sidebar{width:190px}.main{margin-left:190px}.content{padding:18px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="brand"><img class="logo" src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"><div class="brand-title">Bina Lestari</div><div class="brand-sub">Buku Penghubung Digital</div></div>
+<div class="menu-title">MENU GURU</div>
+<a class="menu-item" href="dashboard-guru.html"><span class="icon">📊</span>Dashboard</a>
+<a class="menu-item" href="dashboard-guru.html"><span class="icon">👧</span>Siswa Saya</a>
+<a class="menu-item active" href="buku-penghubung-guru.html"><span class="icon">📖</span>Buku Penghubung</a>
+<a class="menu-item" href="#"><span class="icon">📈</span>Perkembangan Anak</a>
+<a class="menu-item" href="#"><span class="icon">📸</span>Foto Kegiatan</a>
+<div class="menu-title">AKUN</div><a class="menu-item" href="#" id="logout"><span class="icon">🚪</span>Keluar</a>
+</aside>
+
+<main class="main">
+<header class="topbar"><div class="title">Buku Penghubung</div><div class="teacher"><div class="teacher-text"><b id="teacherName">Guru</b><div class="role">Guru</div></div><div class="avatar" id="avatar">G</div></div></header>
+<section class="content">
+<div class="heading"><h1>📖 Buku Penghubung Harian</h1><p>Isi catatan kegiatan Ananda dari datang sampai pulang.</p></div>
+<div class="card">
+
+<div class="student"><div class="student-name" id="studentName">Memuat siswa...</div><div class="student-meta" id="studentMeta"></div></div>
+
+<div class="grid info">
+<div><label>Hari / Tanggal</label><input type="date" id="date"></div>
+<div><label>Guru</label><input id="teacherDisplay" readonly></div>
+</div>
+
+<div class="activity"><div class="head"><div class="num">1</div><div><h2>🌸 Kedatangan</h2><div class="hint">Kondisi dan kemandirian Ananda saat tiba di sekolah.</div></div></div>
+<div class="example">Contoh: Hari ini Ananda datang ke sekolah dengan ceria, mengucapkan salam dan bersalaman dengan Ibu Guru.</div>
+<textarea id="arrival" placeholder="Tuliskan catatan kedatangan Ananda..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">2</div><div><h2>🤸 Senam Pagi</h2><div class="hint">Keikutsertaan, gerakan dan semangat Ananda.</div></div></div>
+<textarea id="exercise" placeholder="Tuliskan bagaimana Ananda mengikuti senam pagi..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">3</div><div><h2>📖 Ikrar, Tahsin & Tahfidz</h2><div class="hint">Kegiatan keagamaan, bacaan, hafalan dan keberanian tampil.</div></div></div>
+<textarea id="iqrar" placeholder="Tuliskan perkembangan Ananda saat ikrar, tahsin dan tahfidz..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">4</div><div><h2>📚 Materi Pagi</h2><div class="hint">Materi yang disampaikan dan respons Ananda.</div></div></div>
+<div class="grid"><div><label>Materi yang Dibahas</label><input id="material" placeholder="Contoh: Mengenal sayuran"></div><div><label>Respons / Pemahaman Ananda</label><input id="materialResponse" placeholder="Contoh: Menyimak dan menjawab pertanyaan"></div></div>
+<textarea id="morning" placeholder="Tuliskan catatan kegiatan materi pagi..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">5</div><div><h2>🍱 Snack Time</h2><div class="hint">Kebiasaan cuci tangan, doa, makan dan kerapian.</div></div></div>
+<textarea id="snack" placeholder="Tuliskan kegiatan Snack Time Ananda..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">6</div><div><h2>✏️ Belajar / Asah Motorik</h2><div class="hint">Kegiatan inti, motorik, calistung, kreativitas dan kemampuan mengikuti arahan.</div></div></div>
+<div class="grid"><div><label>Kegiatan</label><input id="motoricActivity" placeholder="Contoh: Meronce / menulis / mengenal huruf"></div><div><label>Kemampuan yang Terlihat</label><input id="motoricAbility" placeholder="Contoh: Mampu menyelesaikan tugas"></div></div>
+<textarea id="motoric" placeholder="Tuliskan catatan kegiatan belajar/asah motorik..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">7</div><div><h2>⭐ Evaluasi</h2><div class="hint">Respons Ananda saat mengingat kembali pembelajaran sampai persiapan pulang.</div></div></div>
+<textarea id="evaluation" placeholder="Tuliskan hasil evaluasi dan kegiatan sebelum pulang..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">8</div><div><h2>💌 Catatan Guru</h2><div class="hint">Catatan personal yang hangat untuk Bunda/Ayah.</div></div></div>
+<textarea id="teacherNote" style="min-height:170px" placeholder="Contoh: Hallo Bunda, hari ini Ananda terlihat ceria dan semangat mengikuti berbagai kegiatan..."></textarea></div>
+
+<div class="activity"><div class="head"><div class="num">9</div><div><h2>🌱 Sikap & Perkembangan Ananda</h2><div class="hint">Pilih sikap yang tampak pada hari ini.</div></div></div>
+<div class="attitudes">
+<label class="att"><input type="checkbox" value="Antusias">Antusias</label>
+<label class="att"><input type="checkbox" value="Mandiri">Mandiri</label>
+<label class="att"><input type="checkbox" value="Aktif">Aktif</label>
+<label class="att"><input type="checkbox" value="Percaya Diri">Percaya Diri</label>
+<label class="att"><input type="checkbox" value="Mau Berbagi">Mau Berbagi</label>
+<label class="att"><input type="checkbox" value="Mengikuti Arahan">Mengikuti Arahan</label>
+</div>
+<div class="grid" style="margin-top:14px">
+<div><label>Tingkat Perkembangan</label><select id="level"><option value="">Pilih</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+<div><label>Program</label><input id="program" placeholder="Otomatis dari kelas/program"></div>
+</div></div>
+
+<div class="notice"><b>Catatan:</b> Semua kegiatan di atas akan digabung menjadi satu catatan harian Buku Penghubung. Guru dapat menyimpan sebagai draft atau mengirim setelah catatan selesai diperiksa.</div>
+<div class="actions"><button class="btn back" onclick="location.href='dashboard-guru.html'">← Kembali</button><button class="btn draft" id="draft">Simpan Draft</button><button class="btn send" id="send">Simpan & Kirim ke Orang Tua</button></div>
+</div>
+</section></main>
+
+<script>
+const sb=supabase.createClient("https://tocqxblcdugvhpyxpfti.supabase.co","sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea");
+let teacherId=null,studentId=new URLSearchParams(location.search).get("student_id");
+
+const ids=["arrival","exercise","iqrar","morning","snack","motoric","evaluation","teacherNote"];
+const val=id=>document.getElementById(id).value.trim()||null;
+
+async function init(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){location.href="login.html";return}
+ const {data:p,error:pe}=await sb.from("profiles").select("id,full_name,role").eq("id",session.user.id).single();
+ if(pe||!p||p.role!=="guru"){alert("Akses hanya untuk Guru.");location.href="login.html";return}
+ teacherId=p.id;
+
+ // Gunakan nama profil. Jika masih berupa nama default "Guru",
+ // ambil nama dari metadata akun login (akun Ina) dan sinkronkan ke profil.
+ let guruName=(p.full_name||"").trim();
+ const metaName=(session.user.user_metadata?.full_name||"").trim();
+ if(!guruName || guruName.toLowerCase()==="guru") guruName=metaName;
+ if(!guruName) guruName=(session.user.email||"Guru").split("@")[0];
+ guruName=guruName||"Guru";
+
+ document.getElementById("teacherName").textContent=guruName;
+ document.getElementById("teacherDisplay").value=guruName;
+ document.getElementById("avatar").textContent=guruName.charAt(0).toUpperCase();
+
+ // Simpan nama yang benar ke profil agar seluruh halaman Orang Tua
+ // dapat membaca nama Guru yang sama.
+ if(guruName.toLowerCase()!=="guru" && guruName!==p.full_name){
+   const {error:profileUpdateError}=await sb.from("profiles")
+     .update({full_name:guruName,updated_at:new Date().toISOString()})
+     .eq("id",teacherId);
+   if(profileUpdateError) console.warn("Profil Guru belum dapat disinkronkan:",profileUpdateError.message);
+ }
+ if(!studentId){alert("Siswa belum dipilih.");location.href="dashboard-guru.html";return}
+ const {data,error}=await sb.from("teacher_students").select("student_id,students(id,full_name,class_id,classes(name,program))").eq("teacher_id",teacherId).eq("student_id",studentId).single();
+ if(error||!data?.students){alert("Siswa tidak ditemukan atau bukan siswa yang diampu.");location.href="dashboard-guru.html";return}
+ const s=data.students,c=s.classes;document.getElementById("studentName").textContent=s.full_name;document.getElementById("studentMeta").textContent=c?(c.program?c.name+" - "+c.program:c.name):"";if(c)document.getElementById("program").value=c.program?c.name+" - "+c.program:c.name;
+ document.getElementById("date").value=new Date().toISOString().slice(0,10);
+}
+
+async function save(status){
+ const date=document.getElementById("date").value;
+ const missing=ids.filter(id=>!document.getElementById(id).value.trim());
+ if(!date){alert("Hari/Tanggal wajib diisi.");return}
+ if(missing.length){
+   alert("Mohon isi semua bagian kegiatan dan Catatan Guru terlebih dahulu.");
+   document.getElementById(missing[0]).focus();
+   return;
+ }
+
+ const btns=[document.getElementById("draft"),document.getElementById("send")];
+ btns.forEach(b=>{b.disabled=true;b.textContent=b.id==="draft"?"Menyimpan...":"Mengirim..."});
+
+ try{
+   const material=val("material");
+   const materialResponse=val("materialResponse");
+   const motoricActivity=val("motoricActivity");
+   const motoricAbility=val("motoricAbility");
+
+   const sections=[
+     ["KEDATANGAN",val("arrival")],
+     ["SENAM PAGI",val("exercise")],
+     ["IKRAR, TAHSIN & TAHFIDZ",val("iqrar")],
+     ["MATERI PAGI",
+       (material?"Materi: "+material+"\n":"")+
+       (materialResponse?"Respons/Pemahaman: "+materialResponse+"\n":"")+
+       val("morning")],
+     ["SNACK TIME",val("snack")],
+     ["BELAJAR / ASAH MOTORIK",
+       (motoricActivity?"Kegiatan: "+motoricActivity+"\n":"")+
+       (motoricAbility?"Kemampuan yang Terlihat: "+motoricAbility+"\n":"")+
+       val("motoric")],
+     ["EVALUASI",val("evaluation")]
+   ];
+
+   const learningActivity=sections.map(x=>x[0]+":\n"+x[1]).join("\n\n");
+   const attitudes=[...document.querySelectorAll(".att input:checked")].map(x=>x.value);
+
+   const payload={
+     student_id:studentId,
+     teacher_id:teacherId,
+     teacher_name:document.getElementById("teacherDisplay").value.trim() || "Ina",
+     learning_date:date,
+     program:val("program"),
+     subject:"Kegiatan Harian",
+     learning_material:material,
+     learning_activity:learningActivity,
+     activity_level:document.getElementById("level").value||null,
+     child_attitude:attitudes,
+     teacher_note:val("teacherNote"),
+     status:status
+   };
+
+   if(status==="sent") payload.sent_at=new Date().toISOString();
+
+   const {data:existing,error:findError}=await sb.from("reports")
+     .select("id")
+     .eq("student_id",studentId)
+     .eq("teacher_id",teacherId)
+     .eq("learning_date",date)
+     .maybeSingle();
+
+   if(findError) throw findError;
+
+   let result;
+   if(existing){
+     result=await sb.from("reports").update(payload).eq("id",existing.id).select("id").single();
+   }else{
+     result=await sb.from("reports").insert(payload).select("id").single();
+   }
+
+   if(result.error) throw result.error;
+
+   alert(status==="sent"
+     ?"Buku Penghubung berhasil disimpan dan dikirim ke orang tua.\nGuru: "+(document.getElementById("teacherDisplay").value.trim()||"Ina")
+     :"Buku Penghubung berhasil disimpan sebagai draft.\nGuru: "+(document.getElementById("teacherDisplay").value.trim()||"Ina"));
+
+   window.location.href="dashboard-guru.html";
+ }catch(e){
+   console.error(e);
+   alert("Gagal menyimpan Buku Penghubung:\n"+(e.message||e));
+ }finally{
+   btns[0].disabled=false;
+   btns[1].disabled=false;
+   btns[0].textContent="Simpan Draft";
+   btns[1].textContent="Simpan & Kirim ke Orang Tua";
+ }
+}
+document.getElementById("draft").onclick=()=>save("draft");
+document.getElementById("send").onclick=()=>save("sent");
+document.getElementById("logout").onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.href="login.html"};
+init();
+</script>
+</body>
+</html>

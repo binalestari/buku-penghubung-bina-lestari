@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foto Kegiatan - Bina Lestari</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f8fc;color:#183b56}
+.sidebar{position:fixed;left:0;top:0;width:245px;height:100vh;background:#168bd0;color:#fff;padding:22px 15px;overflow-y:auto}
+.logo{width:70px;height:70px;object-fit:contain;background:#fff;border-radius:14px;padding:5px;display:block;margin:0 auto 10px}
+.brand{text-align:center;font-weight:700;font-size:18px;margin-bottom:25px}
+.menu a{display:block;color:#fff;text-decoration:none;padding:11px 13px;border-radius:9px;margin:4px 0;font-size:14px}
+.menu a:hover,.menu a.active{background:rgba(255,255,255,.18)}
+.main{margin-left:245px;padding:28px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:22px}
+h1{margin:0;font-size:27px}.sub{color:#6d8291;margin-top:6px;font-size:14px}
+.card{background:#fff;border-radius:16px;padding:22px;box-shadow:0 5px 20px rgba(26,74,105,.08);margin-bottom:20px}
+label{display:block;font-weight:700;font-size:14px;margin:0 0 7px}
+select,input,textarea{width:100%;padding:11px 12px;border:1px solid #d5e1ea;border-radius:9px;font-size:14px;outline:none;background:#fff}
+select:focus,input:focus,textarea:focus{border-color:#168bd0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.full{grid-column:1/-1}
+button{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer}
+.primary{background:#168bd0;color:#fff}.secondary{background:#eaf5fc;color:#168bd0}.danger{background:#feecec;color:#d33}
+.drop{border:2px dashed #b8d9ec;border-radius:14px;padding:25px;text-align:center;background:#f8fcff;margin-top:16px}
+.drop input{display:none}.drop label{color:#168bd0;cursor:pointer;margin:0}
+.preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:16px}
+.item{border:1px solid #e1ebf2;border-radius:12px;padding:8px;background:#fff}
+.item img{width:100%;height:120px;object-fit:cover;border-radius:8px;display:block}
+.item small{display:block;margin-top:7px;color:#6d8291;word-break:break-word}
+.progress{height:7px;background:#e7eef4;border-radius:99px;overflow:hidden;margin-top:8px}.bar{height:100%;width:0;background:#168bd0}
+.status{margin-top:12px;padding:10px;border-radius:9px;background:#f3f8fb;font-size:13px}
+.table{width:100%;border-collapse:collapse}.table th,.table td{padding:11px 9px;border-bottom:1px solid #e8eef3;text-align:left;font-size:13px}.table th{color:#5e7585}
+.empty{text-align:center;color:#7a8e9b;padding:25px}
+@media(max-width:800px){.sidebar{position:relative;width:100%;height:auto}.main{margin-left:0;padding:18px}.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <img class="logo" src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png">
+  <div class="brand">BINA LESTARI</div>
+  <nav class="menu">
+    <a href="dashboard-guru.html">🏠 Dashboard</a>
+    <a href="dashboard-guru.html">👧 Siswa Saya</a>
+    <a href="buku-penghubung-guru.html">📖 Buku Penghubung</a>
+    <a href="perkembangan-anak.html">📊 Perkembangan Anak</a>
+    <a class="active" href="foto-kegiatan-guru.html">📸 Foto Kegiatan</a>
+    <a href="#" id="logoutBtn">🚪 Keluar</a>
+  </nav>
+</aside>
+
+<main class="main">
+  <div class="top">
+    <div>
+      <h1>Foto Kegiatan</h1>
+      <div class="sub">Upload foto kegiatan untuk dilihat oleh orang tua melalui Buku Penghubung.</div>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="grid">
+      <div>
+        <label for="reportSelect">Pilih Catatan / Laporan</label>
+        <select id="reportSelect"><option value="">Memuat data...</option></select>
+      </div>
+      <div>
+        <label for="caption">Keterangan Foto</label>
+        <input id="caption" placeholder="Contoh: Senam pagi bersama">
+      </div>
+      <div class="full">
+        <div class="drop">
+          <label for="photoInput">📸 Klik untuk memilih foto kegiatan</label>
+          <div style="font-size:12px;color:#789;margin-top:7px">Bisa memilih beberapa foto sekaligus. Foto akan dikompres otomatis agar hemat penyimpanan.</div>
+          <input id="photoInput" type="file" accept="image/*" multiple>
+        </div>
+        <div id="preview" class="preview"></div>
+        <div id="status" class="status">Belum ada foto dipilih.</div>
+      </div>
+      <div class="full" style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="secondary" id="clearBtn">Bersihkan</button>
+        <button class="primary" id="uploadBtn">⬆️ Upload Foto</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 style="font-size:19px;margin-top:0">Foto yang Sudah Diunggah</h2>
+    <div id="photoList" class="preview"></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://tocqxblcdugvhpyxpfti.supabase.co";
+const SUPABASE_KEY = "sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea";
+const BUCKET = "bina-lestari-kegiatan";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let session = null, teacherId = null, files = [], reports = [];
+
+const $ = id => document.getElementById(id);
+
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function niceDate(v){
+  if(!v) return "-";
+  return new Date(v+"T00:00:00").toLocaleDateString("id-ID",{day:"2-digit",month:"long",year:"numeric"});
+}
+
+async function init(){
+  const {data:{session:s}} = await supabaseClient.auth.getSession();
+  session = s;
+  if(!session){ location.href="login.html"; return; }
+
+  const {data:profile} = await supabaseClient
+    .from("profiles").select("id,full_name,role").eq("id",session.user.id).single();
+
+  if(!profile || profile.role!=="guru"){
+    alert("Halaman ini khusus untuk Guru.");
+    location.href="login.html"; return;
+  }
+  teacherId = profile.id;
+  await loadReports();
+}
+
+async function loadReports(){
+  const {data,error} = await supabaseClient
+    .from("reports")
+    .select("id,student_id,learning_date,program,subject,status,students(full_name)")
+    .eq("teacher_id",teacherId)
+    .order("learning_date",{ascending:false});
+
+  if(error){ console.error(error); $("reportSelect").innerHTML='<option value="">Gagal memuat laporan</option>'; return; }
+  reports=data||[];
+  $("reportSelect").innerHTML='<option value="">-- Pilih laporan --</option>'+
+    reports.map(r=>`<option value="${r.id}">${esc(r.students?.full_name||"-")} • ${niceDate(r.learning_date)} • ${esc(r.program||"")}</option>`).join("");
+  await loadExisting();
+}
+
+$("reportSelect").addEventListener("change", loadExisting);
+
+async function loadExisting(){
+  const rid=$("reportSelect").value;
+  $("photoList").innerHTML="";
+  if(!rid){$("photoList").innerHTML='<div class="empty">Pilih laporan untuk melihat foto.</div>';return;}
+  const {data,error}=await supabaseClient
+    .from("report_photos").select("id,storage_path,caption,created_at")
+    .eq("report_id",rid).order("created_at",{ascending:false});
+  if(error){$("photoList").innerHTML='<div class="empty">Belum bisa memuat foto.</div>';return;}
+  if(!data?.length){$("photoList").innerHTML='<div class="empty">Belum ada foto untuk laporan ini.</div>';return;}
+  for(const p of data){
+    const {data:urlData}=await supabaseClient.storage.from(BUCKET).createSignedUrl(p.storage_path,3600);
+    const url=urlData?.signedUrl;
+    const div=document.createElement("div"); div.className="item";
+    div.innerHTML=(url?`<img src="${esc(url)}">`:`<div style="height:120px;display:grid;place-items:center">Foto tidak tersedia</div>`)
+      +`<small>${esc(p.caption||"Tanpa keterangan")}</small>
+      <button class="danger" style="width:100%;margin-top:8px;padding:8px" onclick="deletePhoto('${esc(p.id)}','${esc(p.storage_path)}')">Hapus</button>`;
+    $("photoList").appendChild(div);
+  }
+}
+
+$("photoInput").addEventListener("change",()=>{
+  files=[...$("photoInput").files];
+  renderPreview();
+});
+
+function renderPreview(){
+  $("preview").innerHTML="";
+  if(!files.length){$("status").textContent="Belum ada foto dipilih.";return;}
+  $("status").textContent=`${files.length} foto dipilih. Foto akan dikompres sebelum upload.`;
+  files.forEach(f=>{
+    const url=URL.createObjectURL(f);
+    const div=document.createElement("div");div.className="item";
+    div.innerHTML=`<img src="${url}"><small>${esc(f.name)}<br>${(f.size/1024/1024).toFixed(2)} MB</small>`;
+    $("preview").appendChild(div);
+  });
+}
+
+function compressImage(file,maxW=1600,quality=.72){
+  return new Promise((resolve,reject)=>{
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+      const c=document.createElement("canvas");c.width=w;c.height=h;
+      c.getContext("2d").drawImage(img,0,0,w,h);
+      c.toBlob(blob=>{URL.revokeObjectURL(url);blob?resolve(blob):reject(new Error("Kompresi gagal"));},"image/jpeg",quality);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("Foto tidak dapat dibaca"));};
+    img.src=url;
+  });
+}
+
+$("uploadBtn").addEventListener("click",uploadPhotos);
+
+async function uploadPhotos(){
+  const reportId=$("reportSelect").value;
+  if(!reportId){alert("Silakan pilih laporan terlebih dahulu.");return;}
+  if(!files.length){alert("Silakan pilih foto terlebih dahulu.");return;}
+
+  $("uploadBtn").disabled=true;
+  let ok=0;
+  try{
+    for(let i=0;i<files.length;i++){
+      $("status").textContent=`Mengupload foto ${i+1} dari ${files.length}...`;
+      const blob=await compressImage(files[i]);
+      const path=`${teacherId}/${reportId}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+      const {error:upErr}=await supabaseClient.storage.from(BUCKET).upload(path,blob,{contentType:"image/jpeg",upsert:false});
+      if(upErr) throw upErr;
+
+      const {error:dbErr}=await supabaseClient.from("report_photos").insert({
+        report_id:reportId,storage_path:path,caption:$("caption").value.trim()||""
+      });
+      if(dbErr){
+        await supabaseClient.storage.from(BUCKET).remove([path]);
+        throw dbErr;
+      }
+      ok++;
+    }
+    alert(`${ok} foto berhasil diunggah.`);
+    files=[];$("photoInput").value="";$("caption").value="";
+    renderPreview(); await loadExisting();
+  }catch(e){
+    console.error(e);
+    alert("Upload gagal: "+(e.message||e));
+  }finally{$("uploadBtn").disabled=false;}
+}
+
+window.deletePhoto=async function(id,path){
+  if(!confirm("Hapus foto ini?")) return;
+  const {error:e1}=await supabaseClient.from("report_photos").delete().eq("id",id);
+  if(e1){alert("Gagal menghapus data foto: "+e1.message);return;}
+  const {error:e2}=await supabaseClient.storage.from(BUCKET).remove([path]);
+  if(e2) console.warn(e2);
+  await loadExisting();
+};
+
+$("clearBtn").addEventListener("click",()=>{
+  files=[];$("photoInput").value="";$("caption").value="";renderPreview();
+});
+
+$("logoutBtn").addEventListener("click",async e=>{
+  e.preventDefault();
+  sessionStorage.removeItem("bina_lestari_login_ok");
+  await supabaseClient.auth.signOut();
+  location.href="login.html";
+});
+
+init();
+</script>
+</body>
+</html>

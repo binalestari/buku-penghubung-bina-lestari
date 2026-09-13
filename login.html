@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Buku Penghubung Bina Lestari</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eaf8ff, #ffffff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+		.logo-image {
+		width: auto;
+		max-width: 130px;
+		height: auto;
+		display: block;
+		object-fit: contain;
+		margin: 0 auto 12px;
+		}
+		
+        .logo h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #168fc2;
+        }
+
+        .logo p {
+            margin-top: 8px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 17px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #28a9e0;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #28a9e0;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #168fc2;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-box">
+
+<div class="logo">
+
+    <img
+        src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"
+        alt="Logo Bina Lestari"
+        class="logo-image"
+    >
+
+    <h1>Bina Lestari</h1>
+
+    <p>Buku Penghubung Digital</p>
+
+</div>
+
+        <form id="loginForm">
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Masukkan email"
+                required
+            >
+
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Masukkan password"
+                required
+            >
+
+
+            <button type="submit" id="loginButton">
+                LOGIN
+            </button>
+
+        </form>
+
+
+        <div id="message"></div>
+
+
+        <div class="footer">
+            © Bimbel Bina Lestari
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // ==========================================
+    // KONEKSI SUPABASE
+    // ==========================================
+
+    const SUPABASE_URL =
+        "https://tocqxblcdugvhpyxpfti.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    // ==========================================
+    // PROSES LOGIN
+    // ==========================================
+
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById("email").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+            const loginButton =
+                document.getElementById("loginButton");
+
+
+            message.textContent = "";
+            loginButton.disabled = true;
+            loginButton.textContent = "MEMPROSES...";
+
+
+            try {
+
+                // Login ke Supabase Authentication
+
+                const { data, error } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                // Pastikan user berhasil login
+
+                const user = data.user;
+
+
+                // Ambil data profile dan role
+
+                const { data: profile, error: profileError } =
+                    await supabaseClient
+                        .from("profiles")
+                        .select("full_name, role")
+                        .eq("id", user.id)
+                        .single();
+
+
+                if (profileError) {
+                    throw profileError;
+                }
+
+
+                // ==================================
+                // LOGIN BERHASIL
+                // ==================================
+
+                message.style.color = "#168f52";
+
+                message.textContent =
+                    "Login berhasil. Selamat datang, " +
+                    profile.full_name + "!";
+
+
+                // Simpan role untuk tahap dashboard nanti
+
+                localStorage.setItem(
+                    "user_role",
+                    profile.role
+                );
+
+
+                localStorage.setItem(
+                    "user_name",
+                    profile.full_name
+                );
+
+                // Penanda bahwa Dashboard dibuka melalui proses login
+                sessionStorage.setItem("bina_lestari_login_ok", "1");
+
+                setTimeout(function() {
+                    if (profile.role === "admin") {
+                        window.location.href = "dashboard-admin.html";
+                    } else if (profile.role === "guru") {
+                        window.location.href = "dashboard-guru.html";
+                    } else if (profile.role === "orang_tua") {
+                        window.location.href = "dashboard-orang-tua.html";
+                    }
+                }, 300);
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                message.style.color = "#d93025";
+
+                message.textContent =
+                    "Login gagal: " +
+                    error.message;
+
+            }
+
+
+            loginButton.disabled = false;
+            loginButton.textContent = "LOGIN";
+
+        });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perkembangan Anak - Bina Lestari</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f8fc;color:#172b3f}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0b617f;color:#fff}.brand{text-align:center;padding:15px;border-bottom:1px solid #ffffff22}.logo{width:72px;height:72px;background:#fff;border-radius:14px;padding:5px}.brand-title{font-size:20px;font-weight:700;margin-top:7px}.brand-sub{font-size:11px}.menu-title{font-size:10px;font-weight:700;letter-spacing:1px;padding:17px 13px 7px;opacity:.65}.menu-item{display:flex;gap:10px;align-items:center;margin:3px 7px;padding:11px 12px;border-radius:9px;color:#fff;text-decoration:none;font-size:13px}.menu-item:hover,.menu-item.active{background:#ffffff22}.icon{width:22px;text-align:center}.main{margin-left:230px;min-height:100vh}.top{height:60px;background:#fff;border-bottom:1px solid #e1e9ef;display:flex;justify-content:space-between;align-items:center;padding:0 27px}.top b{font-size:20px}.user{display:flex;align-items:center;gap:8px;font-size:12px}.avatar{width:38px;height:38px;border-radius:50%;background:#168fe8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}.content{padding:28px;max-width:1120px}.head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px}.head h1{margin:0;font-size:24px}.head p{margin:5px 0 0;color:#71808e;font-size:12px}.card{background:#fff;border:1px solid #dfe8ef;border-radius:13px;padding:20px;margin-bottom:18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}.field select,.field input{width:100%;height:43px;border:1px solid #d5e1e9;border-radius:8px;padding:0 12px;font-size:13px;background:#fff}.field select:focus,.field input:focus{outline:none;border-color:#168fe8}.levels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}.level{border:1px solid #dce7ee;border-radius:10px;padding:14px;background:#f9fbfd}.level h3{font-size:13px;margin:0 0 9px}.level select{width:100%;height:40px;border:1px solid #d5e1e9;border-radius:8px;padding:0 10px;background:#fff}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.btn{border:0;border-radius:8px;padding:10px 16px;cursor:pointer;font-weight:700;font-size:12px}.primary{background:#168fe8;color:#fff}.secondary{background:#edf2f6;color:#425466}.notice{background:#f4f9fd;border:1px solid #d9ebf8;border-radius:9px;padding:11px 13px;color:#527087;font-size:11px;line-height:1.5;margin-top:14px}.status{font-size:12px;color:#168f52;font-weight:700}.error{color:#d64545;font-size:12px;margin-top:10px}.empty{padding:22px;text-align:center;color:#71808e;font-size:12px;background:#f8fafc;border-radius:9px}
+@media(max-width:800px){.sidebar{width:195px}.main{margin-left:195px}.content{padding:18px}.grid,.levels{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="brand"><img class="logo" src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"><div class="brand-title">Bina Lestari</div><div class="brand-sub">Buku Penghubung Digital</div></div>
+<div class="menu-title">MENU GURU</div>
+<a class="menu-item" href="dashboard-guru.html"><span class="icon">📊</span>Dashboard</a>
+<a class="menu-item" href="dashboard-guru.html"><span class="icon">👧</span>Siswa Saya</a>
+<a class="menu-item" href="buku-penghubung-guru.html"><span class="icon">📖</span>Buku Penghubung</a>
+<a class="menu-item active" href="perkembangan-anak.html"><span class="icon">📈</span>Perkembangan Anak</a>
+<a class="menu-item" href="#"><span class="icon">📸</span>Foto Kegiatan</a>
+<div class="menu-title">AKUN</div><a class="menu-item" href="#" id="logout"><span class="icon">🚪</span>Keluar</a>
+</aside>
+<main class="main">
+<header class="top"><b>Perkembangan Anak</b><div class="user"><div><b id="teacherName">Guru</b><br><span style="font-size:10px;color:#71808e">Guru</span></div><div class="avatar" id="avatar">G</div></div></header>
+<section class="content">
+<div class="head"><div><h1>📈 Perkembangan Anak</h1><p>Catat perkembangan Ananda berdasarkan laporan harian Guru.</p></div></div>
+<div class="card">
+<div class="grid">
+<div class="field"><label>Ananda</label><select id="student"><option value="">Memuat siswa...</option></select></div>
+<div class="field"><label>Tanggal Laporan</label><input id="date" type="date"></div>
+</div>
+<div id="reportInfo" class="notice">Pilih Ananda dan tanggal. Data perkembangan terhubung dengan Buku Penghubung pada tanggal yang sama.</div>
+<div class="levels">
+<div class="level"><h3>✋ Motorik Halus</h3><select id="fine_motor"><option value="">Pilih perkembangan</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+<div class="level"><h3>🏃 Motorik Kasar</h3><select id="gross_motor"><option value="">Pilih perkembangan</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+<div class="level"><h3>🗣️ Bahasa</h3><select id="language"><option value="">Pilih perkembangan</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+<div class="level"><h3>🤝 Sosialisasi</h3><select id="socialization"><option value="">Pilih perkembangan</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+<div class="level"><h3>🔤 Pra-Calistung</h3><select id="pre_calistung"><option value="">Pilih perkembangan</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+<div class="level"><h3>📖 Iqro / Al-Qur'an</h3><select id="iqro_quran"><option value="">Pilih perkembangan</option><option>BB</option><option>MB</option><option>BSH</option><option>BSB</option></select></div>
+</div>
+<div class="notice"><b>Keterangan:</b> BB = Belum Berkembang • MB = Mulai Berkembang • BSH = Berkembang Sesuai Harapan • BSB = Berkembang Sangat Baik.</div>
+<div class="actions"><button class="btn secondary" id="reset">Reset</button><button class="btn primary" id="save">Simpan Perkembangan</button></div>
+<div id="msg"></div>
+</div>
+</section>
+</main>
+<script>
+const sb=supabase.createClient("https://tocqxblcdugvhpyxpfti.supabase.co","sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea");
+let teacherId=null,students=[],currentReport=null;
+const fields=["fine_motor","gross_motor","language","socialization","pre_calistung","iqro_quran"];
+function setMsg(t,err=false){document.getElementById("msg").innerHTML='<div class="'+(err?"error":"status")+'">'+t+'</div>'}
+async function init(){
+ const {data:{session}}=await sb.auth.getSession();if(!session){location.href="login.html";return}
+ const {data:p,error}=await sb.from("profiles").select("id,full_name,role").eq("id",session.user.id).single();
+ if(error||!p||p.role!=="guru"){alert("Akses hanya untuk Guru.");location.href="login.html";return}
+ teacherId=p.id;document.getElementById("teacherName").textContent=p.full_name;document.getElementById("avatar").textContent=p.full_name.charAt(0).toUpperCase();
+ document.getElementById("date").value=new Date().toISOString().slice(0,10);
+ const {data:links}=await sb.from("teacher_students").select("student_id,students(id,full_name)").eq("teacher_id",teacherId);
+ students=(links||[]).map(x=>x.students).filter(Boolean);
+ const sel=document.getElementById("student");sel.innerHTML='<option value="">Pilih Ananda</option>'+students.map(s=>'<option value="'+s.id+'">'+s.full_name+'</option>').join("");
+ const params=new URLSearchParams(location.search);if(params.get("student_id"))sel.value=params.get("student_id");
+ sel.addEventListener("change",loadDevelopment);document.getElementById("date").addEventListener("change",loadDevelopment);
+ if(sel.value)await loadDevelopment();
+}
+async function loadDevelopment(){
+ currentReport=null;setMsg("");
+ const sid=document.getElementById("student").value,date=document.getElementById("date").value;if(!sid||!date)return;
+ const {data:r,error}=await sb.from("reports").select("id,learning_date,status").eq("student_id",sid).eq("teacher_id",teacherId).eq("learning_date",date).maybeSingle();
+ if(error){document.getElementById("reportInfo").textContent="Gagal mencari Buku Penghubung: "+error.message;return}
+ if(!r){document.getElementById("reportInfo").innerHTML="⚠️ <b>Belum ada Buku Penghubung untuk tanggal ini.</b> Simpan laporan harian Guru terlebih dahulu, lalu isi perkembangan.";fields.forEach(f=>document.getElementById(f).value="");return}
+ currentReport=r;document.getElementById("reportInfo").innerHTML="✅ Buku Penghubung ditemukan. Status: <b>"+r.status+"</b>. Perkembangan akan terhubung dengan laporan ini.";
+ const {data:d,error:de}=await sb.from("development").select("*").eq("report_id",r.id).maybeSingle();
+ if(de){setMsg(de.message,true);return}
+ fields.forEach(f=>document.getElementById(f).value=d?.[f]||"");
+}
+document.getElementById("save").onclick=async()=>{
+ if(!currentReport){alert("Simpan Buku Penghubung untuk Ananda dan tanggal tersebut terlebih dahulu.");return}
+ const missing=fields.filter(f=>!document.getElementById(f).value);if(missing.length){alert("Mohon isi semua aspek perkembangan terlebih dahulu.");return}
+ const payload={report_id:currentReport.id};fields.forEach(f=>payload[f]=document.getElementById(f).value);
+ const {data:existing}=await sb.from("development").select("id").eq("report_id",currentReport.id).maybeSingle();
+ let res=existing?await sb.from("development").update(payload).eq("id",existing.id):await sb.from("development").insert(payload);
+ if(res.error){setMsg("Gagal menyimpan: "+res.error.message,true);return}
+ const {data:saved,error:saveError}=await sb.from("development").select("*").eq("report_id",currentReport.id).maybeSingle();
+ if(saveError){setMsg("Data tersimpan, tetapi gagal memuat ulang: "+saveError.message,true);return}
+ fields.forEach(f=>document.getElementById(f).value=saved?.[f]||"");
+ setMsg("Perkembangan Anak berhasil disimpan dan data sudah dimuat kembali. ✅");
+};
+document.getElementById("reset").onclick=()=>{fields.forEach(f=>document.getElementById(f).value="");setMsg("")};
+document.getElementById("logout").onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.href="login.html"};
+init().catch(e=>{console.error(e);setMsg("Gagal memuat halaman: "+e.message,true)});
+</script>
+</body>
+</html>

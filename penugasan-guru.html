@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penugasan Guru - Bina Lestari</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f8fc;color:#1e293b}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0b5d7b;color:#fff;overflow:auto}
+.brand{text-align:center;padding:18px 12px;border-bottom:1px solid rgba(255,255,255,.15)}.logo{width:72px;height:72px;background:#fff;border-radius:14px;padding:5px;object-fit:contain}.brand-title{font-size:20px;font-weight:700;margin-top:8px}.brand-sub{font-size:11px;opacity:.8}
+.menu-title{font-size:10px;font-weight:700;letter-spacing:1px;padding:18px 14px 7px;opacity:.65}.menu-item{display:flex;gap:10px;align-items:center;padding:11px 14px;margin:3px 8px;border-radius:9px;color:#fff;text-decoration:none;font-size:13px}.menu-item:hover,.menu-item.active{background:rgba(255,255,255,.14)}.icon{width:24px;text-align:center}
+.main{margin-left:230px;min-height:100vh}.topbar{height:64px;background:#fff;border-bottom:1px solid #e5ebf0;display:flex;justify-content:space-between;align-items:center;padding:0 28px}.title{font-size:20px;font-weight:700}.admin{display:flex;align-items:center;gap:9px}.admin-text{text-align:right;font-size:12px}.role{font-size:10px;color:#7b8794;margin-top:2px}.avatar{width:38px;height:38px;border-radius:50%;background:#168fe8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content{padding:28px}.heading{margin-bottom:18px}h1{font-size:24px;margin:0 0 5px}.sub{font-size:13px;color:#71808e}.grid{display:grid;grid-template-columns:1fr 1.35fr;gap:18px}.card{background:#fff;border:1px solid #e1e9ef;border-radius:13px;padding:20px}.card-title{font-weight:700;font-size:16px;margin-bottom:5px}.card-sub{font-size:12px;color:#71808e;margin-bottom:18px}label{display:block;font-size:12px;font-weight:700;margin:0 0 7px}select{width:100%;height:43px;border:1px solid #d8e3eb;border-radius:8px;padding:0 11px;font-size:13px;background:#fff;margin-bottom:14px}button{border:0;border-radius:8px;padding:10px 15px;cursor:pointer;font-weight:700}.primary{background:#168fe8;color:#fff;width:100%}.primary:hover{background:#087fd5}table{width:100%;border-collapse:collapse}th,td{padding:12px 10px;border-bottom:1px solid #edf1f4;text-align:left;font-size:12px}th{background:#f7f9fb;color:#526273;font-size:11px}.remove{background:#ffeded;color:#d64545;padding:7px 9px;font-size:11px}.empty{text-align:center;padding:30px;color:#71808e}.notice{margin-top:14px;background:#f4f9fd;border:1px solid #d9ebf8;border-radius:9px;padding:11px;font-size:11px;color:#527087;line-height:1.5}
+@media(max-width:850px){.sidebar{width:190px}.main{margin-left:190px}.grid{grid-template-columns:1fr}.content{padding:18px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="brand"><img class="logo" src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"><div class="brand-title">Bina Lestari</div><div class="brand-sub">Buku Penghubung Digital</div></div>
+<div class="menu-title">MENU UTAMA</div>
+<a class="menu-item" href="dashboard-admin.html"><span class="icon">📊</span>Dashboard</a>
+<a class="menu-item active" href="data-guru.html"><span class="icon">👩‍🏫</span>Data Guru</a>
+<a class="menu-item" href="data-orang-tua.html"><span class="icon">👨‍👩‍👧</span>Data Orang Tua</a>
+<a class="menu-item" href="data-siswa.html"><span class="icon">👧</span>Data Siswa</a>
+<a class="menu-item" href="kelas-program.html"><span class="icon">🏫</span>Kelas & Program</a>
+<div class="menu-title">BUKU PENGHUBUNG</div>
+<a class="menu-item"><span class="icon">📖</span>Buku Penghubung</a>
+<a class="menu-item"><span class="icon">📈</span>Perkembangan Anak</a>
+<a class="menu-item"><span class="icon">📸</span>Foto Kegiatan</a>
+<a class="menu-item"><span class="icon">💬</span>Tanggapan Orang Tua</a>
+</aside>
+<main class="main">
+<header class="topbar"><div class="title">Penugasan Guru</div><div class="admin"><div class="admin-text"><b id="adminName">Admin</b><div class="role">Administrator</div></div><div class="avatar" id="adminAvatar">A</div></div></header>
+<section class="content">
+<div class="heading"><h1>👩‍🏫 Penugasan Guru ke Siswa</h1><div class="sub">Tentukan siswa yang menjadi tanggung jawab masing-masing guru.</div></div>
+<div class="grid">
+<div class="card">
+<div class="card-title">Tambah Penugasan</div><div class="card-sub">Pilih guru dan siswa, kemudian simpan.</div>
+<label>Guru</label><select id="teacherSelect"><option value="">Pilih guru</option></select>
+<label>Siswa</label><select id="studentSelect"><option value="">Pilih siswa</option></select>
+<button class="primary" id="assignBtn">+ Tambahkan Siswa ke Guru</button>
+<div class="notice">Satu siswa dapat ditugaskan kepada lebih dari satu guru bila diperlukan. Data penugasan disimpan pada tabel <b>teacher_students</b>.</div>
+</div>
+<div class="card">
+<div class="card-title">Daftar Siswa yang Diampu</div><div class="card-sub">Pilih guru untuk melihat siswa yang ditugaskan.</div>
+<label>Lihat Guru</label><select id="viewTeacher"><option value="">Pilih guru</option></select>
+<div id="assignmentArea"><div class="empty">Pilih guru terlebih dahulu.</div></div>
+</div>
+</div>
+</section>
+</main>
+<script>
+const supabaseClient=supabase.createClient("https://tocqxblcdugvhpyxpfti.supabase.co","sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea");
+let teachers=[],students=[];
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+
+async function checkAdmin(){
+ const {data:{session}}=await supabaseClient.auth.getSession();
+ if(!session){location.href="login.html";return false}
+ const {data:p,error}=await supabaseClient.from("profiles").select("full_name,role").eq("id",session.user.id).single();
+ if(error||!p||p.role!=="admin"){alert("Akses hanya untuk Admin.");location.href="login.html";return false}
+ document.getElementById("adminName").textContent=p.full_name||"Admin";
+ document.getElementById("adminAvatar").textContent=(p.full_name||"A").charAt(0).toUpperCase();
+ return true;
+}
+
+async function loadData(){
+ const [t,s]=await Promise.all([
+  supabaseClient.from("profiles").select("id,full_name").eq("role","guru").order("full_name"),
+  supabaseClient.from("students").select("id,full_name").eq("is_active",true).order("full_name")
+ ]);
+ if(t.error){alert("Gagal mengambil guru: "+t.error.message);return}
+ if(s.error){alert("Gagal mengambil siswa: "+s.error.message);return}
+ teachers=t.data||[];students=s.data||[];
+ ["teacherSelect","viewTeacher"].forEach(id=>{
+   const el=document.getElementById(id);el.innerHTML='<option value="">Pilih guru</option>';
+   teachers.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.full_name;el.appendChild(o)});
+ });
+ const ss=document.getElementById("studentSelect");ss.innerHTML='<option value="">Pilih siswa</option>';
+ students.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.full_name;ss.appendChild(o)});
+}
+
+async function loadAssignments(teacherId){
+ const area=document.getElementById("assignmentArea");
+ if(!teacherId){area.innerHTML='<div class="empty">Pilih guru terlebih dahulu.</div>';return}
+ const {data,error}=await supabaseClient.from("teacher_students").select("id,student_id,students(full_name)").eq("teacher_id",teacherId);
+ if(error){area.innerHTML='<div class="empty">Gagal memuat: '+esc(error.message)+'</div>';return}
+ if(!data?.length){area.innerHTML='<div class="empty">Belum ada siswa yang ditugaskan.</div>';return}
+ let rows="";
+ data.forEach((a,i)=>rows+=`<tr><td>${i+1}</td><td>${esc(a.students?.full_name||"-")}</td><td><button class="remove" onclick="removeAssignment('${a.id}')">Hapus</button></td></tr>`);
+ area.innerHTML=`<table><thead><tr><th>No</th><th>Nama Siswa</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+document.getElementById("viewTeacher").onchange=e=>loadAssignments(e.target.value);
+
+document.getElementById("assignBtn").onclick=async()=>{
+ const teacherId=document.getElementById("teacherSelect").value;
+ const studentId=document.getElementById("studentSelect").value;
+ if(!teacherId||!studentId){alert("Guru dan siswa wajib dipilih.");return}
+ const btn=document.getElementById("assignBtn");btn.disabled=true;btn.textContent="Menyimpan...";
+ try{
+   const {error}=await supabaseClient.from("teacher_students").insert({teacher_id:teacherId,student_id:studentId});
+   if(error)throw error;
+   document.getElementById("viewTeacher").value=teacherId;
+   await loadAssignments(teacherId);
+   alert("Siswa berhasil ditugaskan kepada guru.");
+ }catch(e){alert("Gagal menyimpan penugasan:\n"+e.message)}
+ finally{btn.disabled=false;btn.textContent="+ Tambahkan Siswa ke Guru"}
+};
+
+window.removeAssignment=async function(id){
+ if(!confirm("Hapus penugasan siswa ini dari guru?"))return;
+ const {error}=await supabaseClient.from("teacher_students").delete().eq("id",id);
+ if(error){alert("Gagal menghapus: "+error.message);return}
+ await loadAssignments(document.getElementById("viewTeacher").value);
+};
+
+(async()=>{if(await checkAdmin())await loadData()})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Data Guru - Bina Lestari
+    </title>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f4f8fc;
+
+            color: #1e293b;
+
+        }
+
+
+        /* ===============================
+           SIDEBAR
+        =============================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 250px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #126fd3,
+                    #168fe8
+                );
+
+            color: white;
+
+            padding: 25px 15px;
+
+            overflow-y: auto;
+
+            z-index: 1000;
+
+        }
+
+
+        .brand {
+
+            text-align: center;
+
+            padding-bottom: 22px;
+
+            border-bottom:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.2
+                );
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .brand-logo {
+
+            width: 70px;
+
+            height: 70px;
+
+            object-fit: contain;
+
+            background: white;
+
+            padding: 5px;
+
+            border-radius: 14px;
+
+            display: block;
+
+            margin: auto auto 10px;
+
+        }
+
+
+        .brand-title {
+
+            font-size: 19px;
+
+            font-weight: bold;
+
+        }
+
+
+        .brand-subtitle {
+
+            font-size: 11px;
+
+            opacity: .85;
+
+            margin-top: 4px;
+
+        }
+
+
+        .menu-title {
+
+            font-size: 10px;
+
+            font-weight: bold;
+
+            opacity: .65;
+
+            padding: 9px 12px;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        .menu-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            margin-bottom: 4px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+        }
+
+
+        .menu-item:hover {
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .15
+                );
+
+        }
+
+
+        .menu-item.active {
+
+            background: white;
+
+            color: #126fd3;
+
+            font-weight: bold;
+
+        }
+
+
+        .menu-icon {
+
+            width: 23px;
+
+            text-align: center;
+
+            font-size: 18px;
+
+        }
+
+
+        /* ===============================
+           MAIN
+        =============================== */
+
+        .main {
+
+            margin-left: 250px;
+
+            min-height: 100vh;
+
+        }
+
+
+        .topbar {
+
+            height: 72px;
+
+            background: white;
+
+            border-bottom:
+                1px solid #e4ebf2;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding:
+                0 30px;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 900;
+
+        }
+
+
+        .page-title {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            color: #17324d;
+
+        }
+
+
+        .admin-info {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+        }
+
+
+        .admin-text {
+
+            text-align: right;
+
+        }
+
+
+        .admin-name {
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+        }
+
+
+        .admin-role {
+
+            font-size: 11px;
+
+            color: #788798;
+
+            margin-top: 3px;
+
+        }
+
+
+        .admin-avatar {
+
+            width: 42px;
+
+            height: 42px;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #126fd3,
+                    #49b9ef
+                );
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-weight: bold;
+
+        }
+
+
+        /* ===============================
+           CONTENT
+        =============================== */
+
+        .content {
+
+            padding: 30px;
+
+        }
+
+
+        .page-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .page-heading h1 {
+
+            margin: 0;
+
+            font-size: 24px;
+
+            color: #17324d;
+
+        }
+
+
+        .page-heading p {
+
+            margin:
+                6px
+                0
+                0;
+
+            color: #7c8998;
+
+            font-size: 13px;
+
+        }
+
+
+        .btn-primary {
+
+            border: none;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #126fd3,
+                    #168fe8
+                );
+
+            color: white;
+
+            padding:
+                12px
+                18px;
+
+            border-radius: 10px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 5px 15px
+                rgba(
+                    18,
+                    111,
+                    211,
+                    .18
+                );
+
+        }
+
+
+        .btn-primary:hover {
+
+            opacity: .92;
+
+        }
+
+
+        /* ===============================
+           CARD
+        =============================== */
+
+        .card {
+
+            background: white;
+
+            border-radius: 16px;
+
+            border:
+                1px solid #e7eef5;
+
+            box-shadow:
+                0 5px 18px
+                rgba(
+                    25,
+                    70,
+                    110,
+                    .06
+                );
+
+            overflow: hidden;
+
+        }
+
+
+        .card-top {
+
+            padding: 18px 22px;
+
+            border-bottom:
+                1px solid #edf2f6;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
+        .search {
+
+            width: 280px;
+
+            padding:
+                11px
+                14px;
+
+            border:
+                1px solid #dce6ef;
+
+            border-radius: 9px;
+
+            outline: none;
+
+            font-size: 13px;
+
+        }
+
+
+        .search:focus {
+
+            border-color: #168fe8;
+
+        }
+
+
+        /* ===============================
+           TABLE
+        =============================== */
+
+        .table-wrapper {
+
+            overflow-x: auto;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+        }
+
+
+        th {
+
+            text-align: left;
+
+            background: #f7fbff;
+
+            color: #617184;
+
+            font-size: 12px;
+
+            padding:
+                14px
+                18px;
+
+            white-space: nowrap;
+
+        }
+
+
+        td {
+
+            padding:
+                15px
+                18px;
+
+            border-top:
+                1px solid #edf2f6;
+
+            font-size: 13px;
+
+            white-space: nowrap;
+
+        }
+
+
+        tr:hover td {
+
+            background: #fbfdff;
+
+        }
+
+
+        .teacher-name {
+
+            font-weight: bold;
+
+            color: #17324d;
+
+        }
+
+
+        .email {
+
+            color: #66778a;
+
+        }
+
+
+        .status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            color: #159957;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+        }
+
+
+        .status-dot {
+
+            width: 8px;
+
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #22b573;
+
+        }
+
+
+        .btn-edit {
+
+            border: none;
+
+            background: #edf7ff;
+
+            color: #126fd3;
+
+            padding:
+                8px
+                11px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+        }
+
+
+        .empty {
+
+            text-align: center;
+
+            padding: 55px 20px;
+
+            color: #8290a0;
+
+        }
+
+
+        .empty-icon {
+
+            font-size: 42px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        /* ===============================
+           MODAL
+        =============================== */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(
+                    10,
+                    30,
+                    50,
+                    .45
+                );
+
+            z-index: 2000;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+        }
+
+
+        .modal.show {
+
+            display: flex;
+
+        }
+
+
+        .modal-box {
+
+            width: 100%;
+
+            max-width: 500px;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    .18
+                );
+
+        }
+
+
+        .modal-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .modal-header h2 {
+
+            margin: 0;
+
+            font-size: 19px;
+
+        }
+
+
+        .close {
+
+            border: none;
+
+            background: #f1f5f9;
+
+            width: 34px;
+
+            height: 34px;
+
+            border-radius: 50%;
+
+            cursor: pointer;
+
+            font-size: 18px;
+
+        }
+
+
+        .form-group {
+
+            margin-bottom: 16px;
+
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .form-group input {
+
+            width: 100%;
+
+            height: 44px;
+
+            padding:
+                0
+                12px;
+
+            border:
+                1px solid #dce6ef;
+
+            border-radius: 9px;
+
+            outline: none;
+
+        }
+
+
+        .form-group input:focus {
+
+            border-color: #168fe8;
+
+        }
+
+
+        .modal-note {
+
+            background: #fff8e8;
+
+            border:
+                1px solid #f5dfaa;
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            color: #806b35;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .modal-actions {
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            gap: 10px;
+
+        }
+
+
+        .btn-secondary {
+
+            border: none;
+
+            background: #edf1f5;
+
+            color: #4d5c6b;
+
+            padding:
+                11px
+                17px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+        }
+
+
+        /* ===============================
+           RESPONSIVE
+        =============================== */
+
+        @media (
+            max-width: 768px
+        ) {
+
+            .sidebar {
+
+                transform:
+                    translateX(-100%);
+
+            }
+
+
+            .main {
+
+                margin-left: 0;
+
+            }
+
+
+            .topbar {
+
+                padding:
+                    0 15px;
+
+            }
+
+
+            .admin-text {
+
+                display: none;
+
+            }
+
+
+            .content {
+
+                padding:
+                    20px
+                    15px;
+
+            }
+
+
+            .page-header {
+
+                align-items: flex-start;
+
+                gap: 15px;
+
+                flex-direction: column;
+
+            }
+
+
+            .search {
+
+                width: 100%;
+
+            }
+
+
+            .card-top {
+
+                flex-direction: column;
+
+                gap: 12px;
+
+                align-items: stretch;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <img
+            src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"
+            alt="Logo Bina Lestari"
+            class="brand-logo"
+        >
+
+        <div class="brand-title">
+            Bina Lestari
+        </div>
+
+        <div class="brand-subtitle">
+            Buku Penghubung Digital
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        MENU UTAMA
+    </div>
+
+
+    <a
+        class="menu-item"
+        href="dashboard-admin.html"
+    >
+
+        <span class="menu-icon">
+            📊
+        </span>
+
+        Dashboard
+
+    </a>
+
+
+    <a
+        class="menu-item active"
+        href="data-guru.html"
+    >
+
+        <span class="menu-icon">
+            👩‍🏫
+        </span>
+
+        Data Guru
+
+    </a>
+
+
+    <a
+        class="menu-item"
+    >
+
+        <span class="menu-icon">
+            👨‍👩‍👧
+        </span>
+
+        Data Orang Tua
+
+    </a>
+
+
+    <a
+        class="menu-item"
+    >
+
+        <span class="menu-icon">
+            👧
+        </span>
+
+        Data Siswa
+
+    </a>
+
+
+    <a
+        class="menu-item"
+    >
+
+        <span class="menu-icon">
+            🏫
+        </span>
+
+        Kelas & Program
+
+    </a>
+
+
+    <div class="menu-title">
+        BUKU PENGHUBUNG
+    </div>
+
+
+    <a class="menu-item">
+
+        <span class="menu-icon">
+            📖
+        </span>
+
+        Buku Penghubung
+
+    </a>
+
+
+    <a class="menu-item">
+
+        <span class="menu-icon">
+            📈
+        </span>
+
+        Perkembangan Anak
+
+    </a>
+
+
+    <a class="menu-item">
+
+        <span class="menu-icon">
+            📸
+        </span>
+
+        Foto Kegiatan
+
+    </a>
+
+
+    <a class="menu-item">
+
+        <span class="menu-icon">
+            💬
+        </span>
+
+        Tanggapan Orang Tua
+
+    </a>
+
+
+    <div class="menu-title">
+        LAINNYA
+    </div>
+
+
+    <a class="menu-item">
+
+        <span class="menu-icon">
+            ⚙️
+        </span>
+
+        Pengaturan
+
+    </a>
+
+
+    <a
+        class="menu-item"
+        id="logoutButton"
+    >
+
+        <span class="menu-icon">
+            🚪
+        </span>
+
+        Keluar
+
+    </a>
+
+</aside>
+
+
+
+<!-- =========================================
+     MAIN
+========================================== -->
+
+<main class="main">
+
+
+    <header class="topbar">
+
+        <div class="page-title">
+            Data Guru
+        </div>
+
+
+        <div class="admin-info">
+
+            <div class="admin-text">
+
+                <div
+                    class="admin-name"
+                    id="adminName"
+                >
+                    Admin
+                </div>
+
+                <div class="admin-role">
+                    Administrator
+                </div>
+
+            </div>
+
+
+            <div
+                class="admin-avatar"
+                id="adminAvatar"
+            >
+                A
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================
+         CONTENT
+    ====================================== -->
+
+    <section class="content">
+
+
+        <div class="page-header">
+
+            <div class="page-heading">
+
+                <h1>
+                    👩‍🏫 Data Guru
+                </h1>
+
+                <p>
+                    Kelola data guru Bina Lestari
+                </p>
+
+            </div>
+
+
+            <button
+                class="btn-primary"
+                id="addTeacherButton"
+            >
+                + Tambah Guru
+            </button>
+
+        </div>
+
+
+
+        <!-- TABLE -->
+
+        <div class="card">
+
+
+            <div class="card-top">
+
+                <div>
+
+                    <strong>
+                        Daftar Guru
+                    </strong>
+
+                    <div
+                        style="
+                        font-size:11px;
+                        color:#8996a5;
+                        margin-top:4px;
+                        "
+                    >
+                        Guru yang terdaftar di sistem
+                    </div>
+
+                </div>
+
+
+                <input
+                    type="text"
+                    class="search"
+                    id="searchInput"
+                    placeholder="🔎 Cari nama atau email..."
+                >
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                NO
+                            </th>
+
+                            <th>
+                                NAMA GURU
+                            </th>
+
+                            <th>
+                                EMAIL
+                            </th>
+
+                            <th>
+                                NO. HP
+                            </th>
+
+                            <th>
+                                STATUS
+                            </th>
+
+                            <th>
+                                AKSI
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="teacherTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================
+     MODAL EDIT
+========================================== -->
+
+<div
+    class="modal"
+    id="editModal"
+>
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Edit Data Guru
+            </h2>
+
+            <button
+                class="close"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Guru
+            </label>
+
+            <input
+                type="text"
+                id="editName"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                No. HP
+            </label>
+
+            <input
+                type="text"
+                id="editPhone"
+                placeholder="Contoh: 08123456789"
+            >
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn-secondary"
+                id="cancelEdit"
+            >
+                Batal
+            </button>
+
+
+            <button
+                class="btn-primary"
+                id="saveEdit"
+            >
+                Simpan Perubahan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     MODAL TAMBAH GURU
+========================================== -->
+
+<div
+    class="modal"
+    id="addModal"
+>
+
+    <div class="modal-box">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Tambah Guru
+            </h2>
+
+            <button
+                class="close"
+                id="closeAddModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-note">
+
+            Untuk keamanan, pembuatan akun login
+            Guru dilakukan melalui
+            <strong>
+                Authentication → Users
+            </strong>
+            di Supabase terlebih dahulu.
+
+            Setelah akun dibuat, profil Guru
+            otomatis masuk ke sistem dan role
+            dapat diatur menjadi Guru.
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Guru
+            </label>
+
+            <input
+                type="text"
+                id="newTeacherName"
+                placeholder="Nama lengkap guru"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="newTeacherEmail"
+                placeholder="Email yang digunakan untuk login"
+            >
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                class="btn-secondary"
+                id="cancelAdd"
+            >
+                Tutup
+            </button>
+
+
+            <button
+                class="btn-primary"
+                id="goAuthUsers"
+            >
+                Lanjut ke Authentication
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+    // =========================================
+    // SUPABASE
+    // =========================================
+
+    const SUPABASE_URL =
+        "https://tocqxblcdugvhpyxpfti.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea";
+
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+
+    // =========================================
+    // DATA
+    // =========================================
+
+    let teachers = [];
+
+    let editingTeacherId = null;
+
+
+
+    // =========================================
+    // CEK ADMIN
+    // =========================================
+
+    async function checkAdmin() {
+
+        const {
+            data: {
+                session
+            }
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+        if (!session) {
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        const {
+            data: profile,
+            error
+        } =
+            await supabaseClient
+            .from("profiles")
+            .select(
+                "full_name, role"
+            )
+            .eq(
+                "id",
+                session.user.id
+            )
+            .single();
+
+
+        if (
+            error ||
+            !profile ||
+            profile.role !== "admin"
+        ) {
+
+            alert(
+                "Akses hanya untuk Admin."
+            );
+
+            window.location.href =
+                "login.html";
+
+            return false;
+
+        }
+
+
+        document.getElementById(
+            "adminName"
+        ).textContent =
+            profile.full_name;
+
+
+        document.getElementById(
+            "adminAvatar"
+        ).textContent =
+            profile.full_name
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+
+        return true;
+
+    }
+
+
+
+    // =========================================
+    // LOAD GURU
+    // =========================================
+
+    async function loadTeachers() {
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select(
+                    "id, full_name, phone, role"
+                )
+                .eq(
+                    "role",
+                    "guru"
+                )
+                .order(
+                    "full_name",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Gagal mengambil data guru:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        teachers = data || [];
+
+        renderTeachers(
+            teachers
+        );
+
+    }
+
+
+
+    // =========================================
+    // RENDER
+    // =========================================
+
+    function renderTeachers(
+        data
+    ) {
+
+        const table =
+            document.getElementById(
+                "teacherTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        if (!data.length) {
+
+            table.innerHTML =
+                `
+                <tr>
+                    <td
+                        colspan="6"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            👩‍🏫
+                        </div>
+
+                        <strong>
+                            Belum ada Guru
+                        </strong>
+
+                        <div
+                            style="
+                            margin-top:7px;
+                            font-size:12px;
+                            "
+                        >
+                            Tambahkan akun Guru
+                            melalui Authentication
+                        </div>
+
+                    </td>
+                </tr>
+                `;
+
+            return;
+
+        }
+
+
+        data.forEach(
+            function (
+                teacher,
+                index
+            ) {
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML =
+                    `
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <div class="teacher-name">
+                            ${escapeHtml(
+                                teacher.full_name
+                            )}
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="email">
+                            Email akun tersedia
+                        </span>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            teacher.phone ||
+                            "-"
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span class="status">
+
+                            <span class="status-dot">
+                            </span>
+
+                            Aktif
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn-edit"
+                            onclick="openEdit('${teacher.id}')"
+                        >
+                            ✏️ Edit
+                        </button>
+
+                        <button
+                            class="btn-edit"
+                            style="margin-left:6px;"
+                            onclick="window.location.href='penugasan-guru.html'"
+                        >
+                            👧 Siswa Diampu
+                        </button>
+
+                    </td>
+                    `;
+
+
+                table.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+
+
+    // =========================================
+    // SEARCH
+    // =========================================
+
+    document
+        .getElementById(
+            "searchInput"
+        )
+        .addEventListener(
+            "input",
+            function () {
+
+                const keyword =
+                    this.value
+                        .toLowerCase()
+                        .trim();
+
+
+                const filtered =
+                    teachers.filter(
+                        function (
+                            teacher
+                        ) {
+
+                            return (
+                                teacher.full_name
+                                    .toLowerCase()
+                                    .includes(
+                                        keyword
+                                    )
+                            );
+
+                        }
+                    );
+
+
+                renderTeachers(
+                    filtered
+                );
+
+            }
+        );
+
+
+
+    // =========================================
+    // EDIT
+    // =========================================
+
+    window.openEdit =
+        function (
+            id
+        ) {
+
+            const teacher =
+                teachers.find(
+                    function (
+                        item
+                    ) {
+
+                        return item.id === id;
+
+                    }
+                );
+
+
+            if (!teacher) {
+
+                return;
+
+            }
+
+
+            editingTeacherId =
+                id;
+
+
+            document.getElementById(
+                "editName"
+            ).value =
+                teacher.full_name || "";
+
+
+            document.getElementById(
+                "editPhone"
+            ).value =
+                teacher.phone || "";
+
+
+            document.getElementById(
+                "editModal"
+            ).classList.add(
+                "show"
+            );
+
+        };
+
+
+
+    // =========================================
+    // SIMPAN EDIT
+    // =========================================
+
+    document
+        .getElementById(
+            "saveEdit"
+        )
+        .addEventListener(
+            "click",
+            async function () {
+
+
+                if (!editingTeacherId) {
+
+                    return;
+
+                }
+
+
+                const name =
+                    document.getElementById(
+                        "editName"
+                    ).value.trim();
+
+
+                const phone =
+                    document.getElementById(
+                        "editPhone"
+                    ).value.trim();
+
+
+                if (!name) {
+
+                    alert(
+                        "Nama Guru wajib diisi."
+                    );
+
+                    return;
+
+                }
+
+
+                const {
+                    error
+                } =
+                    await supabaseClient
+                        .from("profiles")
+                        .update({
+
+                            full_name:
+                                name,
+
+                            phone:
+                                phone || null,
+
+                            updated_at:
+                                new Date()
+                                    .toISOString()
+
+                        })
+                        .eq(
+                            "id",
+                            editingTeacherId
+                        );
+
+
+                if (error) {
+
+                    alert(
+                        "Gagal menyimpan:\n" +
+                        error.message
+                    );
+
+                    return;
+
+                }
+
+
+                alert(
+                    "Data Guru berhasil diperbarui."
+                );
+
+
+                document
+                    .getElementById(
+                        "editModal"
+                    )
+                    .classList.remove(
+                        "show"
+                    );
+
+
+                await loadTeachers();
+
+            }
+        );
+
+
+
+    // =========================================
+    // MODAL
+    // =========================================
+
+    document
+        .getElementById(
+            "closeModal"
+        )
+        .onclick =
+            function () {
+
+                document
+                    .getElementById(
+                        "editModal"
+                    )
+                    .classList.remove(
+                        "show"
+                    );
+
+            };
+
+
+    document
+        .getElementById(
+            "cancelEdit"
+        )
+        .onclick =
+            function () {
+
+                document
+                    .getElementById(
+                        "editModal"
+                    )
+                    .classList.remove(
+                        "show"
+                    );
+
+            };
+
+
+
+    // =========================================
+    // TAMBAH GURU
+    // =========================================
+
+    document
+        .getElementById(
+            "addTeacherButton"
+        )
+        .onclick =
+            function () {
+
+                document
+                    .getElementById(
+                        "addModal"
+                    )
+                    .classList.add(
+                        "show"
+                    );
+
+            };
+
+
+    document
+        .getElementById(
+            "closeAddModal"
+        )
+        .onclick =
+            function () {
+
+                document
+                    .getElementById(
+                        "addModal"
+                    )
+                    .classList.remove(
+                        "show"
+                    );
+
+            };
+
+
+    document
+        .getElementById(
+            "cancelAdd"
+        )
+        .onclick =
+            function () {
+
+                document
+                    .getElementById(
+                        "addModal"
+                    )
+                    .classList.remove(
+                        "show"
+                    );
+
+            };
+
+		// =========================================
+// LANJUT KE AUTHENTICATION
+// =========================================
+
+document
+    .getElementById("goAuthUsers")
+    .addEventListener(
+        "click",
+        function () {
+
+            const name =
+                document
+                    .getElementById("newTeacherName")
+                    .value
+                    .trim();
+
+            const email =
+                document
+                    .getElementById("newTeacherEmail")
+                    .value
+                    .trim();
+
+
+            if (!name) {
+
+                alert(
+                    "Nama Guru wajib diisi."
+                );
+
+                return;
+
+            }
+
+
+            if (!email) {
+
+                alert(
+                    "Email Guru wajib diisi."
+                );
+
+                return;
+
+            }
+
+
+            // Simpan sementara data untuk referensi
+            localStorage.setItem(
+                "new_teacher_name",
+                name
+            );
+
+            localStorage.setItem(
+                "new_teacher_email",
+                email
+            );
+
+
+            // Buka halaman Authentication Users
+            window.open(
+                "https://supabase.com/dashboard/project/tocqxblcdugvhpyxpfti/auth/users",
+                "_blank"
+            );
+
+        }
+    );
+
+    // =========================================
+    // ESCAPE HTML
+    // =========================================
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value || ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+
+    // =========================================
+    // LOGOUT
+    // =========================================
+
+    document
+        .getElementById(
+            "logoutButton"
+        )
+        .addEventListener(
+            "click",
+            async function () {
+
+
+                const yakin =
+                    confirm(
+                        "Apakah Ibu yakin ingin keluar?"
+                    );
+
+
+                if (!yakin) {
+
+                    return;
+
+                }
+
+
+                await supabaseClient
+                    .auth
+                    .signOut();
+
+
+                window.location.href =
+                    "login.html";
+
+            }
+        );
+
+
+
+    // =========================================
+    // INIT
+    // =========================================
+
+    async function init() {
+
+        const isAdmin =
+            await checkAdmin();
+
+
+        if (!isAdmin) {
+
+            return;
+
+        }
+
+
+        await loadTeachers();
+
+    }
+
+
+    init();
+
+</script>
+
+</body>
+
+</html>

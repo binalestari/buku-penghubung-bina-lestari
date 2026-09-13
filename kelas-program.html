@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelas & Program - Bina Lestari</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f8fb;color:#243447}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:#0b5575;color:white;overflow-y:auto;z-index:10}
+.brand{text-align:center;padding:24px 15px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand-logo{width:72px;height:72px;object-fit:contain;background:white;border-radius:14px;padding:5px}
+.brand-title{font-size:20px;font-weight:700;margin-top:10px}
+.brand-subtitle{font-size:11px;opacity:.8;margin-top:4px}
+.menu-title{padding:20px 20px 8px;font-size:10px;font-weight:700;letter-spacing:1px;opacity:.65}
+.menu-item{display:flex;align-items:center;gap:12px;margin:3px 10px;padding:12px;border-radius:9px;color:white;text-decoration:none;font-size:13px;cursor:pointer}
+.menu-item:hover,.menu-item.active{background:rgba(255,255,255,.14)}
+.menu-icon{width:25px;text-align:center;font-size:17px}
+.main{margin-left:250px;min-height:100vh}
+.topbar{height:72px;background:white;border-bottom:1px solid #e7edf2;display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:5}
+.page-title{font-size:20px;font-weight:700}
+.admin-info{display:flex;align-items:center;gap:10px}
+.admin-text{text-align:right}
+.admin-name{font-size:13px;font-weight:700}
+.admin-role{font-size:11px;color:#7b8a97;margin-top:3px}
+.admin-avatar{width:38px;height:38px;border-radius:50%;background:#168fe8;color:white;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content{padding:30px}
+.header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.heading h1{margin:0 0 5px;font-size:24px}
+.heading p{margin:0;color:#71808e;font-size:13px}
+.btn-primary{border:0;background:#168fe8;color:white;padding:11px 17px;border-radius:8px;font-weight:700;cursor:pointer}
+.btn-primary:hover{background:#087fd5}
+.card{background:white;border:1px solid #e3ebf2;border-radius:14px;padding:22px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:5px}
+.card-subtitle{font-size:12px;color:#71808e;margin-bottom:18px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:13px 12px;border-bottom:1px solid #edf1f4;text-align:left;font-size:12px}
+th{background:#f7f9fb;color:#526273;font-size:11px}
+.status{display:inline-flex;align-items:center;gap:6px;font-size:11px}
+.dot{width:7px;height:7px;border-radius:50%;background:#2dbb70}
+.dot.off{background:#aab4bd}
+.actions{display:flex;gap:6px}
+.btn-edit,.btn-toggle,.btn-delete{border:0;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:600}
+.btn-edit{background:#eaf5ff;color:#168fe8}
+.btn-toggle{background:#fff5df;color:#a56a00}
+.btn-delete{background:#ffeded;color:#d64545}
+.empty{text-align:center;padding:35px;color:#71808e;font-size:13px}
+.modal{display:none;position:fixed;inset:0;background:rgba(21,40,53,.42);align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal.show{display:flex}
+.modal-box{width:min(500px,100%);background:white;border-radius:14px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.modal-title{font-size:19px;font-weight:700;margin-bottom:5px}
+.modal-subtitle{font-size:12px;color:#71808e;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+input,select{width:100%;height:42px;border:1px solid #d8e3eb;border-radius:8px;padding:0 12px;font-size:13px;outline:none}
+input:focus,select:focus{border-color:#168fe8}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.btn-secondary{border:0;background:#edf2f6;color:#425466;padding:10px 15px;border-radius:8px;cursor:pointer}
+.notice{margin-top:15px;background:#f4f9fd;border:1px solid #d9ebf8;border-radius:9px;padding:11px 13px;color:#527087;font-size:11px;line-height:1.5}
+@media(max-width:800px){.sidebar{width:210px}.main{margin-left:210px}.topbar{padding:0 18px}.content{padding:20px}}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand">
+    <img class="brand-logo" src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png" alt="Logo Bina Lestari">
+    <div class="brand-title">Bina Lestari</div>
+    <div class="brand-subtitle">Buku Penghubung Digital</div>
+  </div>
+
+  <div class="menu-title">MENU UTAMA</div>
+  <a class="menu-item" href="dashboard-admin.html"><span class="menu-icon">📊</span>Dashboard</a>
+  <a class="menu-item" href="data-guru.html"><span class="menu-icon">👩‍🏫</span>Data Guru</a>
+  <a class="menu-item" href="data-orang-tua.html"><span class="menu-icon">👨‍👩‍👧</span>Data Orang Tua</a>
+  <a class="menu-item" href="data-siswa.html"><span class="menu-icon">👧</span>Data Siswa</a>
+  <a class="menu-item active" href="kelas-program.html"><span class="menu-icon">🏫</span>Kelas & Program</a>
+
+  <div class="menu-title">BUKU PENGHUBUNG</div>
+  <a class="menu-item"><span class="menu-icon">📖</span>Buku Penghubung</a>
+  <a class="menu-item"><span class="menu-icon">📈</span>Perkembangan Anak</a>
+  <a class="menu-item"><span class="menu-icon">📸</span>Foto Kegiatan</a>
+  <a class="menu-item"><span class="menu-icon">💬</span>Tanggapan Orang Tua</a>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <div class="page-title">Kelas & Program</div>
+    <div class="admin-info">
+      <div class="admin-text">
+        <div class="admin-name" id="adminName">Admin</div>
+        <div class="admin-role">Administrator</div>
+      </div>
+      <div class="admin-avatar" id="adminAvatar">A</div>
+    </div>
+  </header>
+
+  <section class="content">
+    <div class="header-row">
+      <div class="heading">
+        <h1>🏫 Kelas & Program</h1>
+        <p>Kelola daftar kelas dan program Bina Lestari.</p>
+      </div>
+      <button class="btn-primary" id="addBtn">+ Tambah Kelas/Program</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Daftar Kelas & Program</div>
+      <div class="card-subtitle">Program aktif akan muncul otomatis pada pilihan Kelas/Program di Data Siswa.</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>No</th><th>Nama Kelas/Program</th><th>Status</th><th>Aksi</th></tr>
+          </thead>
+          <tbody id="classTable">
+            <tr><td colspan="4" class="empty">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="notice">Program yang berstatus <b>Aktif</b> dapat dipilih saat menambahkan atau mengedit data siswa.</div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Tambah Kelas/Program</div>
+    <div class="modal-subtitle">Masukkan nama kelas atau program.</div>
+    <div class="form-group">
+      <label>Nama Kelas/Program</label>
+      <input id="className" type="text" placeholder="Contoh: Les Baca Tulis">
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="classStatus">
+        <option value="true">Aktif</option>
+        <option value="false">Tidak Aktif</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="closeBtn">Tutup</button>
+      <button class="btn-primary" id="saveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL="https://tocqxblcdugvhpyxpfti.supabase.co";
+const SUPABASE_KEY="sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea";
+const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let classes=[];
+let editingId=null;
+
+async function checkAdmin(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){window.location.href="login.html";return false}
+  const {data:profile,error}=await supabaseClient.from("profiles")
+    .select("id,full_name,role").eq("id",session.user.id).single();
+  if(error||!profile||profile.role!=="admin"){
+    alert("Akses hanya untuk Admin.");
+    await supabaseClient.auth.signOut();
+    window.location.href="login.html";
+    return false;
+  }
+  document.getElementById("adminName").textContent=profile.full_name||"Admin";
+  document.getElementById("adminAvatar").textContent=(profile.full_name||"A").trim().charAt(0).toUpperCase();
+  return true;
+}
+
+function escapeHtml(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+async function loadClasses(){
+  const {data,error}=await supabaseClient.from("classes")
+    .select("id,name,program,is_active").order("name",{ascending:true});
+  if(error){
+    console.error(error);
+    document.getElementById("classTable").innerHTML='<tr><td colspan="4" class="empty">Gagal memuat data: '+escapeHtml(error.message)+'</td></tr>';
+    return;
+  }
+  classes=data||[];
+  renderClasses();
+}
+
+function displayName(item){
+  return item.program ? item.name+" - "+item.program : item.name;
+}
+
+function renderClasses(){
+  const table=document.getElementById("classTable");
+  if(!classes.length){
+    table.innerHTML='<tr><td colspan="4" class="empty">Belum ada kelas/program.</td></tr>';
+    return;
+  }
+  table.innerHTML="";
+  classes.forEach((item,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=
+      "<td>"+(i+1)+"</td>"+
+      "<td><b>"+escapeHtml(displayName(item))+"</b></td>"+
+      '<td><span class="status"><span class="dot '+(item.is_active?'':'off')+'"></span>'+(item.is_active?'Aktif':'Tidak Aktif')+"</span></td>"+
+      '<td><div class="actions">'+
+      '<button class="btn-edit" onclick="editClass(\''+item.id+'\')">Edit</button>'+
+      '<button class="btn-toggle" onclick="toggleClass(\''+item.id+'\')">'+(item.is_active?'Nonaktifkan':'Aktifkan')+"</button>"+
+      '<button class="btn-delete" onclick="deleteClass(\''+item.id+'\')">Hapus</button>'+
+      "</div></td>";
+    table.appendChild(tr);
+  });
+}
+
+function openModal(item=null){
+  editingId=item?.id||null;
+  document.getElementById("modalTitle").textContent=editingId?"Edit Kelas/Program":"Tambah Kelas/Program";
+  document.getElementById("className").value=item?.name||"";
+  document.getElementById("classStatus").value=String(item?.is_active!==false);
+  document.getElementById("modal").classList.add("show");
+  document.getElementById("className").focus();
+}
+
+function closeModal(){
+  document.getElementById("modal").classList.remove("show");
+  editingId=null;
+}
+
+window.editClass=function(id){
+  const item=classes.find(x=>x.id===id);
+  if(item)openModal(item);
+};
+
+window.toggleClass=async function(id){
+  const item=classes.find(x=>x.id===id);
+  if(!item)return;
+  const next=!item.is_active;
+  const {error}=await supabaseClient.from("classes").update({is_active:next}).eq("id",id);
+  if(error){alert("Gagal mengubah status: "+error.message);return}
+  await loadClasses();
+};
+
+window.deleteClass=async function(id){
+  const item=classes.find(x=>x.id===id);
+  if(!item)return;
+  if(!confirm('Hapus "'+displayName(item)+'"?\n\nJika sudah digunakan oleh siswa, data mungkin tidak dapat dihapus.'))return;
+  const {error}=await supabaseClient.from("classes").delete().eq("id",id);
+  if(error){alert("Gagal menghapus: "+error.message);return}
+  await loadClasses();
+};
+
+document.getElementById("addBtn").onclick=()=>openModal();
+document.getElementById("closeBtn").onclick=closeModal;
+
+document.getElementById("saveBtn").onclick=async()=>{
+  const name=document.getElementById("className").value.trim();
+  const isActive=document.getElementById("classStatus").value==="true";
+  if(!name){alert("Nama kelas/program wajib diisi.");return}
+
+  const btn=document.getElementById("saveBtn");
+  btn.disabled=true; btn.textContent="Menyimpan...";
+  try{
+    let error;
+    if(editingId){
+      const result=await supabaseClient.from("classes")
+        .update({name:name,is_active:isActive}).eq("id",editingId);
+      error=result.error;
+    }else{
+      const result=await supabaseClient.from("classes")
+        .insert({name:name,is_active:isActive});
+      error=result.error;
+    }
+    if(error)throw error;
+    closeModal();
+    await loadClasses();
+    alert(editingId?"Kelas/program berhasil diperbarui.":"Kelas/program berhasil ditambahkan.");
+  }catch(e){
+    console.error(e);
+    alert("Gagal menyimpan: "+(e.message||"Terjadi kesalahan."));
+  }finally{
+    btn.disabled=false; btn.textContent="Simpan";
+  }
+};
+
+(async()=>{
+  if(await checkAdmin())await loadClasses();
+})();
+</script>
+</body>
+</html>

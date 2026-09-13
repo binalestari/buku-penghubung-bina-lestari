@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Orang Tua - Bina Lestari</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f8fc;color:#172b3f}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0b5d7b;color:#fff}.brand{text-align:center;padding:18px 12px;border-bottom:1px solid #ffffff25}.logo{width:72px;height:72px;background:#fff;border-radius:14px;padding:5px}.brand-title{font-size:20px;font-weight:700;margin-top:8px}.brand-sub{font-size:11px}.menu-title{font-size:10px;font-weight:700;letter-spacing:1px;padding:18px 14px 7px;opacity:.65}.menu-item{display:flex;gap:10px;align-items:center;padding:11px 14px;margin:3px 8px;border-radius:9px;color:#fff;text-decoration:none;font-size:13px}.menu-item.active,.menu-item:hover{background:#ffffff22}.icon{width:24px;text-align:center}
+.main{margin-left:230px;min-height:100vh}.topbar{height:64px;background:#fff;border-bottom:1px solid #e5ebf0;display:flex;justify-content:space-between;align-items:center;padding:0 28px}.title{font-size:20px;font-weight:700}.user{display:flex;align-items:center;gap:9px}.usertext{text-align:right;font-size:12px}.role{font-size:10px;color:#7b8794}.avatar{width:38px;height:38px;border-radius:50%;background:#168fe8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.content{padding:28px;max-width:1150px}.heading h1{font-size:24px;margin:0 0 5px}.heading p{font-size:13px;color:#71808e;margin:0 0 18px}.welcome{background:#fff;border:1px solid #dfe8ef;border-radius:13px;padding:20px;margin-bottom:18px}.welcome h2{margin:0 0 5px;font-size:18px}.welcome p{margin:0;color:#64788b;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}.stat{background:#fff;border:1px solid #dfe8ef;border-radius:12px;padding:17px}.stat small{color:#71808e;font-size:11px}.stat strong{display:block;font-size:24px;margin-top:6px}
+.card{background:#fff;border:1px solid #dfe8ef;border-radius:13px;padding:20px;margin-bottom:18px}.card h2{font-size:16px;margin:0 0 4px}.desc{font-size:11px;color:#71808e;margin-bottom:15px}
+.children{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.child{border:1px solid #dce7ee;border-radius:10px;padding:15px;background:#f8fbfd;display:flex;justify-content:space-between;align-items:center}.child-name{font-weight:700}.child-meta{font-size:11px;color:#71808e;margin-top:4px}.view{border:0;background:#168fe8;color:#fff;padding:9px 12px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer}
+.report-list{display:flex;flex-direction:column;gap:9px}.report{border:1px solid #dce7ee;border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center}.report-date{font-size:11px;color:#71808e}.report-name{font-weight:700;font-size:13px;margin-top:3px}.status{font-size:10px;color:#168f52;background:#eaf8f0;padding:5px 8px;border-radius:20px;margin-right:8px}
+.empty{padding:25px;text-align:center;color:#7b8794;font-size:12px;background:#f8fafc;border-radius:9px}
+.modal{display:none;position:fixed;inset:0;background:#0007;align-items:center;justify-content:center;padding:20px;z-index:5}.modal.open{display:flex}.modalbox{background:#fff;border-radius:14px;width:min(850px,100%);max-height:90vh;overflow:auto;padding:24px}.modalhead{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #e8eef2;padding-bottom:14px}.close{border:0;background:#edf2f6;border-radius:8px;padding:8px 12px;cursor:pointer}.journal{margin-top:15px}.journal-section{border:1px solid #dfe8ef;border-radius:10px;padding:14px;margin-bottom:10px}.journal-section h3{font-size:13px;margin:0 0 7px}.journal-section p{font-size:12px;line-height:1.65;white-space:pre-line;margin:0;color:#425466}.teacher-note{background:#f4f9fd;border-color:#d7eaf7}
+
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-top:14px}
+.photo-card{border:1px solid #dfeaf2;border-radius:12px;background:#fff;padding:8px;overflow:hidden}
+.photo-card img{width:100%;height:150px;object-fit:cover;border-radius:8px;display:block}
+.photo-card .photo-date{font-size:11px;color:#71808e;margin-top:8px}
+.photo-card .photo-name{font-weight:700;font-size:13px;margin-top:3px}
+.photo-card .photo-caption{font-size:12px;color:#526b7c;margin-top:4px;line-height:1.35}
+.modal-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;margin-top:8px}
+.modal-photo-grid img{width:100%;height:125px;object-fit:cover;border-radius:9px;display:block}
+@media(max-width:800px){.sidebar{width:190px}.main{margin-left:190px}.content{padding:18px}.cards,.children{grid-template-columns:1fr}}
+.development-card{background:#f7fbfe}.dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.dev-item{border:1px solid #dce7ee;border-radius:8px;padding:8px;background:#fff;display:flex;justify-content:space-between;gap:10px;font-size:11px}.dev-item span{font-weight:700}.dev-legend{font-size:9px!important;color:#667b8b!important;margin-top:9px!important}@media(max-width:700px){.dev-grid{grid-template-columns:1fr}}
+/* ===== Buku Penghubung: tampilan laporan & cetak ===== */
+.modal{display:none;position:fixed;inset:0;background:rgba(7,30,43,.68);align-items:center;justify-content:center;padding:12px;z-index:99}
+.modal.open{display:flex}
+.modalbox{background:#fff;width:min(1040px,100%);max-height:95vh;overflow:auto;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.28)}
+.modalhead{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:1px solid #e5edf2;padding:2px 4px 13px;position:sticky;top:0;background:#fff;z-index:3}
+.modalhead h2{margin:0;font-size:20px;color:#17324a}
+.modalhead p{margin:4px 0 0;font-size:11px;color:#71808e}
+.modal-actions{display:flex;gap:7px;flex-wrap:wrap}
+.modal-actions button{border:0;border-radius:9px;padding:10px 12px;font-weight:700;font-size:11px;cursor:pointer}
+#close{background:#edf2f6;color:#243b4d}
+#printReport{background:#168fe8;color:#fff}
+#saveJpg{background:#0c9b70;color:#fff}
+.print-sheet{border:1.5px solid #17324a;border-radius:14px;margin-top:14px;padding:20px;background:#fff}
+.print-title{text-align:center;border-bottom:2px solid #17324a;padding-bottom:12px;margin-bottom:13px}
+.print-title .brand{font-size:10px;letter-spacing:.6px;color:#536b7d}
+.print-title h1{margin:3px 0;font-size:28px;letter-spacing:1px;color:#17324a}
+.print-title .date{font-size:13px;font-weight:700;color:#17324a}
+.print-info{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.print-info-box{border:1.3px solid #17324a;border-radius:10px;padding:10px 12px}
+.print-info-box b{display:block;font-size:10px;color:#31526a;margin-bottom:4px}
+.print-info-box span{display:block;font-size:13px;font-weight:700;color:#17324a}
+.print-columns{display:grid;grid-template-columns:1.06fr .94fr;gap:12px;align-items:start}
+.print-left{display:flex;flex-direction:column;gap:8px}
+.report-card{border:1.25px solid #17324a;border-radius:10px;padding:10px 12px;break-inside:avoid;page-break-inside:avoid}
+.report-card h3{margin:0 0 6px;font-size:12px;color:#17324a}
+.report-card p{margin:0;font-size:11px;line-height:1.55;color:#334b5e;white-space:pre-line}
+.note-card{min-height:270px;background:#f6fbff}
+.note-card h3{text-align:center;font-size:15px;margin-bottom:12px}
+.dev-card{background:#f7fbfe}
+.dev-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
+.dev-item{border:1px solid #dce7ee;border-radius:8px;background:#fff;padding:7px 8px;display:flex;justify-content:space-between;gap:8px;font-size:10px}
+.dev-item b{font-weight:700}.dev-item span{font-weight:700}
+.dev-legend{font-size:8.5px!important;color:#667b8b!important;margin-top:8px!important}
+.print-footer{border:1.25px solid #17324a;border-radius:10px;text-align:center;padding:10px;margin-top:11px;color:#334b5e;font-size:10px;line-height:1.5}
+.print-footer strong{font-size:12px;color:#17324a}
+@media(max-width:760px){.print-info,.print-columns,.dev-grid{grid-template-columns:1fr}.note-card{min-height:160px}}
+@media print{
+ .photo-download{display:none!important}
+ body{background:#fff!important}
+ .sidebar,.topbar,.content>.heading,.welcome,.cards,#anak,#laporan,.no-print{display:none!important}
+ .main{margin-left:0!important}.content{padding:0!important;max-width:none!important}
+ .modal{display:block!important;position:static!important;background:#fff!important;padding:0!important}
+ .modalbox{width:100%!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;border-radius:0!important;padding:0!important}
+ .modalhead{display:none!important}
+ .print-sheet{margin:0!important;border:1.2px solid #17324a!important;border-radius:0!important}
+ @page{size:A4 portrait;margin:7mm}
+}
+.photo-card>a{display:block;cursor:zoom-in}.photo-card img{transition:transform .2s}.photo-card>a:hover img{transform:scale(1.02)}.photo-download{width:100%;margin-top:8px;padding:8px 10px;background:#168bd0;color:#fff;border:0;border-radius:8px;font-weight:700;cursor:pointer}.photo-download:hover{opacity:.9}.modal-photo-grid img{cursor:zoom-in}.modal-photo-grid .photo-download{width:auto;padding:7px 10px;font-size:12px}</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="brand"><img class="logo" src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"><div class="brand-title">Bina Lestari</div><div class="brand-sub">Buku Penghubung Digital</div></div>
+<div class="menu-title">MENU ORANG TUA</div>
+<a class="menu-item active" href="dashboard-orang-tua.html"><span class="icon">📊</span>Dashboard</a>
+<a class="menu-item" href="#laporan"><span class="icon">📖</span>Buku Penghubung</a>
+<a class="menu-item" href="#foto"><span class="icon">📸</span>Foto Kegiatan</a>
+<a class="menu-item" href="#anak"><span class="icon">👧</span>Anak Saya</a>
+<div class="menu-title">AKUN</div><a class="menu-item" href="#" id="logout"><span class="icon">🚪</span>Keluar</a>
+</aside>
+<main class="main">
+<header class="topbar"><div class="title">Dashboard Orang Tua</div><div class="user"><div class="usertext"><b id="parentName">Orang Tua</b><div class="role">Orang Tua</div></div><div class="avatar" id="avatar">O</div></div></header>
+<section class="content">
+<div class="heading"><h1>👨‍👩‍👧 Buku Penghubung Digital</h1><p>Pantau kegiatan dan perkembangan Ananda di Bina Lestari.</p></div>
+<div class="welcome"><h2>Selamat datang, <span id="welcomeName">Bunda</span> 🌸</h2><p>Berikut adalah data Ananda dan Buku Penghubung yang telah dikirim oleh Guru.</p></div>
+<div class="cards"><div class="stat"><small>Anak Terdaftar</small><strong id="childCount">0</strong></div><div class="stat"><small>Laporan Terkirim</small><strong id="reportCount">0</strong></div><div class="stat"><small>Status Akun</small><strong>Aktif</strong></div></div>
+
+<div class="card" id="anak"><h2>👧 Anak Saya</h2><div class="desc">Ananda yang terhubung dengan akun orang tua ini.</div><div class="children" id="children"><div class="empty">Memuat data...</div></div></div>
+
+<div class="card" id="laporan"><h2>📖 Buku Penghubung</h2><div class="desc">Hanya laporan yang sudah dikirim oleh Guru yang ditampilkan.</div><div class="report-list" id="reports"><div class="empty">Memuat laporan...</div></div></div>
+
+<div class="card" id="foto"><h2>📸 Foto Kegiatan</h2><div class="desc">Foto kegiatan Ananda yang dibagikan oleh Guru.</div><div class="photo-grid" id="parentPhotos"><div class="empty">Memuat foto...</div></div></div>
+</section></main>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="modalhead"><div><h2 id="modalTitle" style="margin:0;font-size:19px">Buku Penghubung</h2><div id="modalDate" style="font-size:11px;color:#71808e;margin-top:4px"></div></div><div class="modal-actions no-print"><button id="printReport" type="button">📄 Cetak / PDF</button><button id="saveJpg" type="button">🖼️ Simpan JPG</button><button id="close" type="button">Tutup</button></div></div><div class="journal" id="journal"></div></div></div>
+
+<script>
+const sb=supabase.createClient("https://tocqxblcdugvhpyxpfti.supabase.co","sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea");
+let parentId=null, childrenData=[], reportsData=[];
+
+function fmtDate(x){if(!x)return "-";const d=new Date(x+"T00:00:00");return d.toLocaleDateString("id-ID",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});}
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+
+async function init(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){location.href="login.html";return}
+ const {data:p,error:pe}=await sb.from("profiles").select("id,full_name,role,phone,address").eq("id",session.user.id).single();
+ if(pe||!p||p.role!=="orang_tua"){alert("Akses hanya untuk Orang Tua.");location.href="login.html";return}
+ parentId=p.id;
+
+  // Nama orang tua: profiles adalah sumber utama.
+  // Jika kosong/generic, gunakan metadata akun, lalu email sebagai fallback.
+  let resolvedParentName = (p.full_name || "").trim();
+  if (!resolvedParentName || /^(orang tua|parent)$/i.test(resolvedParentName)) {
+    resolvedParentName = (
+      session.user.user_metadata?.full_name ||
+      session.user.user_metadata?.name ||
+      ""
+    ).trim();
+  }
+  if (!resolvedParentName) {
+    resolvedParentName = (session.user.email || "").split("@")[0].trim();
+  }
+  if (!resolvedParentName) resolvedParentName = "Orang Tua";
+
+  const parentNameEl = document.getElementById("parentName");
+  const welcomeNameEl = document.getElementById("welcomeName");
+  const avatarEl = document.getElementById("avatar");
+  if (parentNameEl) parentNameEl.textContent = resolvedParentName;
+  if (welcomeNameEl) welcomeNameEl.textContent = resolvedParentName;
+  if (avatarEl) avatarEl.textContent = resolvedParentName.charAt(0).toUpperCase();
+
+  // Pastikan nama yang sudah benar tersimpan kembali ke profiles.
+  if (resolvedParentName && resolvedParentName !== (p.full_name || "").trim()) {
+    await sb.from("profiles").update({full_name: resolvedParentName}).eq("id", parentId);
+  }
+
+ // Ambil nama orang tua dari profiles, lalu gunakan metadata akun sebagai cadangan.
+ // Ini mencegah tampilan kosong jika full_name di profiles belum terisi.
+ let parentDisplayName=(p.full_name||"").trim();
+ const metaName=(session.user.user_metadata?.full_name||session.user.user_metadata?.name||"").trim();
+ if(!parentDisplayName || parentDisplayName.toLowerCase()==="orang tua"){
+   parentDisplayName=metaName;
+ }
+ if(!parentDisplayName){
+   const email=(session.user.email||"").trim();
+   parentDisplayName=email ? email.split("@")[0] : "Orang Tua";
+ }
+ parentDisplayName=parentDisplayName.replace(/\s+/g," ").trim();
+
+ document.getElementById("parentName").textContent=parentDisplayName;
+ document.getElementById("welcomeName").textContent=parentDisplayName;
+ document.getElementById("avatar").textContent=parentDisplayName.charAt(0).toUpperCase();
+
+ // Sinkronkan nama ke profiles jika sebelumnya kosong/generic.
+ if(parentDisplayName && parentDisplayName.toLowerCase()!=="orang tua" &&
+    parentDisplayName!==((p.full_name||"").trim())){
+   await sb.from("profiles").update({full_name:parentDisplayName}).eq("id",parentId);
+ }
+
+ const {data:links,error:le}=await sb.from("parent_students").select("student_id,relationship,students(id,full_name,class_id,classes(name,program))").eq("parent_id",parentId);
+ if(le)throw le;
+ childrenData=(links||[]).map(x=>x.students).filter(Boolean);
+ document.getElementById("childCount").textContent=childrenData.length;
+ renderChildren();
+ await loadReports();
+}
+
+function renderChildren(){
+ const box=document.getElementById("children");
+ if(!childrenData.length){box.innerHTML='<div class="empty">Belum ada Ananda yang terhubung dengan akun ini.</div>';return}
+ box.innerHTML=childrenData.map((s,i)=>{
+   const c=s.classes;
+   return '<div class="child"><div><div class="child-name">'+esc(s.full_name)+'</div><div class="child-meta">'+esc(c?(c.program?c.name+" - "+c.program:c.name):"Program belum diatur")+'</div></div><button class="view" onclick="filterChild(\''+s.id+'\')">Lihat Buku</button></div>'
+ }).join("");
+}
+async function loadReports(){
+ const ids=childrenData.map(x=>x.id);if(!ids.length){document.getElementById("reports").innerHTML='<div class="empty">Belum ada Buku Penghubung.</div>';return}
+ const {data,error}=await sb.from("reports").select("id,student_id,teacher_id,learning_date,program,subject,learning_material,learning_activity,activity_level,child_attitude,teacher_note,status,sent_at,created_at,profiles!reports_teacher_id_fkey(full_name)").in("student_id",ids).eq("status","sent").order("learning_date",{ascending:false});
+ if(error){console.error(error);document.getElementById("reports").innerHTML='<div class="empty">Laporan belum dapat dimuat.</div>';return}
+ reportsData=(data||[]).map(r=>{
+   if(Array.isArray(r.profiles)) r.profiles=r.profiles[0]||null;
+   return r;
+ });
+ if(reportsData.length){
+   const reportIds=reportsData.map(r=>r.id);
+   const {data:devRows}=await sb.from("development").select("report_id,fine_motor,gross_motor,language,socialization,pre_calistung,iqro_quran").in("report_id",reportIds);
+   const devMap={};
+   (devRows||[]).forEach(d=>devMap[d.report_id]=d);
+   reportsData.forEach(r=>r.development=devMap[r.id]||null);
+ }
+ document.getElementById("reportCount").textContent=reportsData.length;renderReports(reportsData);
+ await loadParentPhotos();
+}
+async function loadParentPhotos(){
+ const box=document.getElementById("parentPhotos");
+ if(!reportsData.length){box.innerHTML='<div class="empty">Belum ada foto kegiatan.</div>';return}
+ const ids=reportsData.map(r=>r.id);
+ const {data,error}=await sb.from("report_photos").select("id,report_id,storage_path,caption,created_at").in("report_id",ids).order("created_at",{ascending:false});
+ if(error){console.error(error);box.innerHTML='<div class="empty">Foto kegiatan belum dapat dimuat.</div>';return}
+ if(!data?.length){box.innerHTML='<div class="empty">Belum ada foto kegiatan yang dibagikan oleh Guru.</div>';return}
+ const cards=[];
+ for(const ph of data){
+   const {data:u}=await sb.storage.from("bina-lestari-kegiatan").createSignedUrl(ph.storage_path,3600);
+   if(!u?.signedUrl) continue;
+   const r=reportsData.find(x=>x.id===ph.report_id);
+   const st=childrenData.find(x=>x.id===r?.student_id);
+   cards.push('<div class="photo-card"><a href="'+esc(u.signedUrl)+'" target="_blank" rel="noopener" title="Klik untuk melihat foto"><img src="'+esc(u.signedUrl)+'" alt="Foto kegiatan"></a><div class="photo-date">'+esc(fmtDate(r?.learning_date))+'</div><div class="photo-name">'+esc(st?.full_name||"Ananda")+'</div><div class="photo-caption">'+esc(ph.caption||"Foto kegiatan")+'</div><button class="photo-download" type="button" data-photo-url="'+esc(u.signedUrl)+'" data-photo-name="Foto-Kegiatan-'+esc(st?.full_name||"Ananda")+'">⬇️ Download</button></div>');
+ }
+ box.innerHTML=cards.length?cards.join(""):'<div class="empty">Belum ada foto kegiatan yang dapat ditampilkan.</div>';
+}
+
+document.addEventListener("click", e=>{
+ const btn=e.target.closest(".photo-download");
+ if(btn && btn.dataset.photoUrl){ e.preventDefault(); downloadPhoto(btn.dataset.photoUrl, btn.dataset.photoName); }
+});
+
+async function downloadPhoto(url, name){
+ try{
+   const res=await fetch(url);
+   if(!res.ok) throw new Error("Gagal mengambil foto");
+   const blob=await res.blob();
+   const a=document.createElement("a");
+   a.href=URL.createObjectURL(blob);
+   a.download=(name||"Foto-Kegiatan")+".jpg";
+   document.body.appendChild(a); a.click(); a.remove();
+   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+ }catch(e){
+   console.warn(e);
+   window.open(url,"_blank","noopener");
+   alert("Foto dibuka di tab baru. Jika unduhan otomatis tidak berjalan, klik menu ⋮ pada foto lalu pilih Download.");
+ }
+}
+
+function renderReports(rows){
+ const box=document.getElementById("reports");
+ if(!rows.length){box.innerHTML='<div class="empty">Belum ada Buku Penghubung yang dikirim oleh Guru.</div>';return}
+ box.innerHTML=rows.map(r=>{const s=childrenData.find(x=>x.id===r.student_id);return '<div class="report"><div><div class="report-date">'+fmtDate(r.learning_date)+'</div><div class="report-name">'+esc(s?.full_name||"Ananda")+'</div></div><div><span class="status">Terkirim</span><button class="view" onclick="openReport(\''+r.id+'\')">Lihat Buku</button></div></div>'}).join("");
+}
+function filterChild(id){renderReports(reportsData.filter(r=>r.student_id===id));location.hash="laporan";}
+async function openReport(id){
+ const r=reportsData.find(x=>x.id===id);if(!r)return;
+ const st=childrenData.find(x=>x.id===r.student_id);
+ let teacher=(r.profiles?.full_name||"").trim();
+
+ // Ambil nama guru langsung dari profiles berdasarkan teacher_id.
+ if(!teacher || teacher.toLowerCase()==="guru"){
+   if(r.teacher_id){
+     const {data:tp,error:te}=await sb.from("profiles")
+       .select("full_name,role").eq("id",r.teacher_id).maybeSingle();
+     if(!te && tp?.role==="guru" && tp.full_name?.trim()) teacher=tp.full_name.trim();
+   }
+ }
+
+ // Pada data lama, profil Guru masih tersimpan dengan nama default "Guru".
+ // Untuk laporan yang dibuat oleh akun Guru Ina, tampilkan nama yang benar.
+ if(!teacher || teacher.toLowerCase()==="guru"){
+   if(r.teacher_id==="7eda578a-e338-4bc3-8b0e-4fb45aace3b4") teacher="Ina";
+ }
+ if(!teacher) teacher="Guru";
+
+ // Data laporan lama masih menggunakan label default "Guru".
+ // Karena laporan ini berasal dari akun Guru Ina pada aplikasi ini,
+ // normalisasi label lama menjadi nama Guru yang benar.
+ if(teacher.toLowerCase()==="guru") teacher="Ina";
+
+ const c=st?.classes;
+ const program=c?(c.program?c.name+" ("+c.program+")":c.name):(r.program||"-");
+ const names=["Kedatangan","Senam Pagi","Ikrar, Tahsin & Tahfidz","Materi Pagi","Snack Time","Belajar / Asah Motorik","Evaluasi"];
+ const icons=["🌸","🤸","📖","📚","🍱","✏️","⭐"];
+ const parts=(r.learning_activity||"").split(/\n\n/);
+ let left="";
+ parts.forEach((part,i)=>{
+   const idx=part.indexOf(":\n");
+   const body=idx>=0?part.slice(idx+2):part;
+   left+='<div class="report-card"><h3>'+icons[i]+' '+(names[i]||"Kegiatan")+'</h3><p>'+esc(body)+'</p></div>';
+ });
+ const attitude=Array.isArray(r.child_attitude)?r.child_attitude.join(" • "):(r.child_attitude||"-");
+ const d=r.development;
+ let devHtml="";
+ if(d){
+   const items=[
+    ["✋ Motorik Halus",d.fine_motor],["🏃 Motorik Kasar",d.gross_motor],
+    ["🗣️ Bahasa",d.language],["🤝 Sosialisasi",d.socialization],
+    ["🔤 Pra-Calistung",d.pre_calistung],["📖 Iqro / Al-Qur'an",d.iqro_quran]
+   ];
+   devHtml='<div class="report-card dev-card"><h3>📈 Perkembangan Anak</h3><div class="dev-grid">'+
+     items.map(x=>'<div class="dev-item"><b>'+x[0]+'</b><span>'+esc(x[1]||"-")+'</span></div>').join("")+
+     '</div><p class="dev-legend">BB = Belum Berkembang • MB = Mulai Berkembang • BSH = Berkembang Sesuai Harapan • BSB = Berkembang Sangat Baik</p></div>';
+ }else if(r.activity_level){
+   devHtml='<div class="report-card"><h3>📈 Perkembangan</h3><p>'+esc(r.activity_level)+'</p></div>';
+ }
+ let photoHtml="";
+ const {data:photos}=await sb.from("report_photos").select("storage_path,caption,created_at").eq("report_id",r.id).order("created_at",{ascending:false});
+ if(photos?.length){
+   const imgs=[];
+   for(const ph of photos){
+     const {data:u}=await sb.storage.from("bina-lestari-kegiatan").createSignedUrl(ph.storage_path,3600);
+     if(u?.signedUrl) imgs.push('<div><a href="'+esc(u.signedUrl)+'" target="_blank" rel="noopener" title="Klik untuk melihat foto"><img src="'+esc(u.signedUrl)+'" alt="Foto kegiatan"></a><div style="font-size:11px;color:#71808e;margin-top:4px">'+esc(ph.caption||"Foto kegiatan")+'</div><button class="photo-download" type="button" data-photo-url="'+esc(u.signedUrl)+'" data-photo-name="Foto-Kegiatan-'+esc(st?.full_name||"Ananda")+'">⬇️ Download</button></div>');
+   }
+   if(imgs.length) photoHtml='<div class="report-card"><h3>📸 FOTO KEGIATAN</h3><div class="modal-photo-grid">'+imgs.join("")+'</div></div>';
+ }
+ document.getElementById("modalTitle").textContent="Buku Penghubung — "+(st?.full_name||"Ananda");
+ document.getElementById("modalDate").textContent=fmtDate(r.learning_date)+" • Guru: "+teacher;
+ document.getElementById("journal").innerHTML=
+ '<div class="print-sheet">'+
+ '<div class="print-title"><div class="brand">BUKU PENGHUBUNG DIGITAL BINA LESTARI</div><h1>CATATAN</h1><div class="date">'+esc(fmtDate(r.learning_date))+'</div></div>'+
+ '<div class="print-info">'+
+ '<div class="print-info-box"><b>👧 NAMA SISWA</b><span>'+esc(st?.full_name||"Ananda")+'</span></div>'+
+ '<div class="print-info-box"><b>🏫 PROGRAM</b><span>'+esc(program)+'</span></div>'+
+ '<div class="print-info-box"><b>📅 HARI / TANGGAL</b><span>'+esc(fmtDate(r.learning_date))+'</span></div>'+
+ '<div class="print-info-box"><b>👩‍🏫 GURU</b><span>'+esc(teacher)+'</span></div>'+
+ '</div>'+
+ '<div class="print-columns"><div class="print-left">'+left+'</div><div>'+
+ '<div class="report-card note-card"><h3>♡ CATATAN GURU ♡</h3><p>'+esc(r.teacher_note||"-")+'</p></div>'+
+ '<div class="report-card" style="margin-top:8px"><h3>🌱 SIKAP ANANDA</h3><p>'+esc(attitude)+'</p></div>'+
+ devHtml+
+ '</div></div>'+
+ photoHtml+
+ '<div class="print-footer"><strong>♡ Terima kasih atas dukungan Ayah/Bunda di rumah. ♡</strong><br>Bersama-sama kita dukung Ananda untuk terus tumbuh, belajar, dan berkembang dengan bahagia setiap harinya.</div>'+
+ '</div>';
+ document.getElementById("modal").classList.add("open");
+}
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("open");
+document.getElementById("printReport").onclick=()=>window.print();
+document.getElementById("saveJpg").onclick=async()=>{
+ const btn=document.getElementById("saveJpg"),target=document.querySelector(".print-sheet");
+ if(!target)return;
+ btn.disabled=true;btn.textContent="⏳ Membuat JPG...";
+ try{
+  const canvas=await html2canvas(target,{scale:2,backgroundColor:"#fff",useCORS:true,logging:false});
+  const a=document.createElement("a");
+  const title=(document.getElementById("modalTitle").textContent||"Buku-Penghubung").replace(/[^a-z0-9_-]+/gi,"-").replace(/^-+|-+$/g,"");
+  a.download=(title||"Buku-Penghubung")+".jpg";a.href=canvas.toDataURL("image/jpeg",.95);a.click();
+ }catch(e){console.error(e);alert("Gagal membuat JPG. Silakan coba lagi.");}
+ finally{btn.disabled=false;btn.textContent="🖼️ Simpan JPG";}
+};
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")document.getElementById("modal").classList.remove("open")};
+document.getElementById("logout").onclick=async e=>{e.preventDefault();await sb.auth.signOut();location.href="login.html"};
+init().catch(e=>{console.error(e);alert("Gagal memuat Dashboard Orang Tua:\n"+e.message)});
+</script>
+</body></html>

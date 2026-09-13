@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Bina Lestari</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f8fb;
+            color: #243447;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: #0b5575;
+            color: white;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .brand {
+            text-align: center;
+            padding: 24px 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+        }
+
+        .brand-logo {
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            background: white;
+            border-radius: 14px;
+            padding: 5px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            opacity: .8;
+            margin-top: 4px;
+        }
+
+        .menu-title {
+            padding: 20px 20px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            opacity: .65;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 3px 10px;
+            padding: 12px 12px;
+            border-radius: 9px;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255,255,255,.14);
+        }
+
+        .menu-icon {
+            width: 25px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e7edf2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-text {
+            text-align: right;
+        }
+
+        .admin-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-role {
+            font-size: 11px;
+            color: #7b8a97;
+            margin-top: 3px;
+        }
+
+        .admin-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #168fe8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .welcome {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            border: 1px solid #e6edf3;
+            margin-bottom: 22px;
+        }
+
+        .welcome h1 {
+            margin: 0 0 7px;
+            font-size: 24px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #71808e;
+            font-size: 13px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e6edf3;
+            border-radius: 14px;
+            padding: 20px;
+            min-height: 125px;
+        }
+
+        .stat-icon {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            color: #7b8a97;
+            font-size: 12px;
+        }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e6edf3;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .card h2 {
+            margin: 0 0 18px;
+            font-size: 16px;
+        }
+
+        .quick-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .quick-item {
+            border: 1px solid #e4ebf1;
+            border-radius: 10px;
+            padding: 16px 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #263746;
+            font-size: 12px;
+        }
+
+        .quick-item:hover {
+            border-color: #168fe8;
+            background: #f7fbff;
+        }
+
+        .quick-icon {
+            font-size: 25px;
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eef2f5;
+            font-size: 13px;
+        }
+
+        .status-row:last-child {
+            border-bottom: 0;
+        }
+
+        .status-ok {
+            color: #168f52;
+            font-weight: 700;
+        }
+
+        .activity-empty {
+            color: #8b98a4;
+            font-size: 13px;
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 215px;
+            }
+
+            .main {
+                margin-left: 215px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .admin-text {
+                display: none;
+            }
+
+            .quick-menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        <img
+            src="https://tocqxblcdugvhpyxpfti.supabase.co/storage/v1/object/public/bina-lestari-assets/logo-bina-lestari.png"
+            alt="Logo Bina Lestari"
+            class="brand-logo"
+        >
+
+        <div class="brand-title">Bina Lestari</div>
+        <div class="brand-subtitle">Buku Penghubung Digital</div>
+    </div>
+
+    <div class="menu-title">MENU UTAMA</div>
+
+    <a class="menu-item active" href="dashboard-admin.html">
+        <span class="menu-icon">📊</span>
+        Dashboard
+    </a>
+
+    <a class="menu-item" href="data-guru.html">
+        <span class="menu-icon">👩‍🏫</span>
+        Data Guru
+    </a>
+
+    <a class="menu-item" href="./data-orang-tua.html">
+        <span class="menu-icon">👨‍👩‍👧</span>
+        Data Orang Tua
+    </a>
+
+    <a class="menu-item">
+        <span class="menu-icon">👧</span>
+        Data Siswa
+    </a>
+
+    <a class="menu-item" href="kelas-program.html">
+        <span class="menu-icon">🏫</span>
+        Kelas & Program
+    </a>
+
+    <div class="menu-title">BUKU PENGHUBUNG</div>
+
+    <a class="menu-item">
+        <span class="menu-icon">📖</span>
+        Buku Penghubung
+    </a>
+
+    <a class="menu-item">
+        <span class="menu-icon">📈</span>
+        Perkembangan Anak
+    </a>
+
+    <a class="menu-item">
+        <span class="menu-icon">📸</span>
+        Foto Kegiatan
+    </a>
+
+    <a class="menu-item">
+        <span class="menu-icon">💬</span>
+        Tanggapan Orang Tua
+    </a>
+
+    <div class="menu-title">LAINNYA</div>
+
+    <a class="menu-item">
+        <span class="menu-icon">⚙️</span>
+        Pengaturan
+    </a>
+
+    <a class="menu-item" id="logoutButton">
+        <span class="menu-icon">🚪</span>
+        Keluar
+    </a>
+
+</aside>
+
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div class="page-title">
+            Dashboard Admin
+        </div>
+
+        <div class="admin-info">
+
+            <div class="admin-text">
+                <div class="admin-name" id="adminName">
+                    Admin
+                </div>
+
+                <div class="admin-role">
+                    Administrator
+                </div>
+            </div>
+
+            <div class="admin-avatar" id="adminAvatar">
+                A
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <section class="content">
+
+        <div class="welcome">
+            <h1>Selamat Datang 👋</h1>
+            <p>
+                Kelola Buku Penghubung Digital Bina Lestari
+                melalui Dashboard Admin.
+            </p>
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <div class="stat-icon">👩‍🏫</div>
+                <div class="stat-label">Total Guru</div>
+                <div class="stat-value" id="totalGuru">-</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">👨‍👩‍👧</div>
+                <div class="stat-label">Total Orang Tua</div>
+                <div class="stat-value" id="totalOrtu">-</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">👧</div>
+                <div class="stat-label">Total Siswa</div>
+                <div class="stat-value" id="totalSiswa">-</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📖</div>
+                <div class="stat-label">Total Laporan</div>
+                <div class="stat-value" id="totalLaporan">-</div>
+            </div>
+
+        </div>
+
+
+        <div class="grid">
+
+            <div class="card">
+
+                <h2>Menu Cepat</h2>
+
+                <div class="quick-menu">
+
+                    <a class="quick-item" href="data-guru.html">
+                        <span class="quick-icon">👩‍🏫</span>
+                        Data Guru
+                    </a>
+
+                    <a class="quick-item" href="data-orang-tua.html">
+                        <span class="quick-icon">👨‍👩‍👧</span>
+                        Orang Tua
+                    </a>
+
+                    <a class="quick-item">
+                        <span class="quick-icon">👧</span>
+                        Data Siswa
+                    </a>
+
+                    <a class="quick-item">
+                        <span class="quick-icon">🏫</span>
+                        Kelas
+                    </a>
+
+                    <a class="quick-item">
+                        <span class="quick-icon">📖</span>
+                        Laporan
+                    </a>
+
+                    <a class="quick-item">
+                        <span class="quick-icon">📸</span>
+                        Foto
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h2>Status Sistem</h2>
+
+                <div class="status-row">
+                    <span>Supabase</span>
+                    <span class="status-ok">Terhubung</span>
+                </div>
+
+                <div class="status-row">
+                    <span>Authentication</span>
+                    <span class="status-ok">Aktif</span>
+                </div>
+
+                <div class="status-row">
+                    <span>Database</span>
+                    <span class="status-ok">Aktif</span>
+                </div>
+
+                <div class="status-row">
+                    <span>Role Admin</span>
+                    <span class="status-ok" id="roleStatus">Memeriksa...</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card" style="margin-top:20px;">
+
+            <h2>Aktivitas Terbaru</h2>
+
+            <div class="activity-empty">
+                Belum ada aktivitas terbaru.
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    const SUPABASE_URL =
+        "https://tocqxblcdugvhpyxpfti.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_aRNrW3kuc4OAgkfybEHTHg_fSZGggea";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    async function getCount(table, roleColumn, roleValue) {
+
+        let query =
+            supabaseClient
+                .from(table)
+                .select("*", {
+                    count: "exact",
+                    head: true
+                });
+
+        if (roleColumn && roleValue) {
+            query = query.eq(
+                roleColumn,
+                roleValue
+            );
+        }
+
+        const { count, error } = await query;
+
+        if (error) {
+            console.error(
+                "COUNT ERROR:",
+                table,
+                error
+            );
+
+            return 0;
+        }
+
+        return count || 0;
+    }
+
+
+    async function initDashboard() {
+
+        const {
+            data: {
+                session
+            }
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (!session) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        const {
+            data: profile,
+            error: profileError
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select("full_name, role")
+                .eq("id", session.user.id)
+                .single();
+
+
+        if (
+            profileError ||
+            !profile ||
+            profile.role !== "admin"
+        ) {
+
+            alert(
+                "Akses hanya untuk Admin."
+            );
+
+            await supabaseClient.auth.signOut();
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        document.getElementById(
+            "adminName"
+        ).textContent =
+            profile.full_name || "Admin";
+
+
+        document.getElementById(
+            "adminAvatar"
+        ).textContent =
+            (profile.full_name || "A")
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+
+        document.getElementById(
+            "roleStatus"
+        ).textContent =
+            "Terverifikasi";
+
+
+        const [
+            guru,
+            ortu,
+            siswa,
+            laporan
+        ] = await Promise.all([
+
+            getCount(
+                "profiles",
+                "role",
+                "guru"
+            ),
+
+            getCount(
+                "profiles",
+                "role",
+                "orang_tua"
+            ),
+
+            getCount(
+                "students",
+                null,
+                null
+            ),
+
+            getCount(
+                "reports",
+                null,
+                null
+            )
+
+        ]);
+
+
+        document.getElementById(
+            "totalGuru"
+        ).textContent = guru;
+
+
+        document.getElementById(
+            "totalOrtu"
+        ).textContent = ortu;
+
+
+        document.getElementById(
+            "totalSiswa"
+        ).textContent = siswa;
+
+
+        document.getElementById(
+            "totalLaporan"
+        ).textContent = laporan;
+
+    }
+
+
+    document
+        .getElementById("logoutButton")
+        .addEventListener(
+            "click",
+            async function () {
+
+                const yakin =
+                    confirm(
+                        "Apakah Ibu yakin ingin keluar?"
+                    );
+
+                if (!yakin) {
+                    return;
+                }
+
+                await supabaseClient
+                    .auth
+                    .signOut();
+
+                window.location.href =
+                    "login.html";
+
+            }
+        );
+
+
+    initDashboard();
+
+</script>
+
+</body>
+</html>
