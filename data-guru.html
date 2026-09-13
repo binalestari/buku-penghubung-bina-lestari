@@ -918,7 +918,145 @@
 
         }
 
-    </style>
+    
+/* =========================================================
+   BINA LESTARI — RESPONSIVE MOBILE PATCH
+   Nyaman untuk Android/iPhone tanpa mengubah fungsi aplikasi.
+   ========================================================= */
+@media (max-width: 600px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { -webkit-text-size-adjust: 100%; }
+
+  /* Navigasi: sidebar berubah menjadi bar atas yang bisa digeser */
+  .sidebar {
+    position: relative !important;
+    left: auto !important; top: auto !important; bottom: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 10px 8px !important;
+    overflow: visible !important;
+    z-index: 20 !important;
+  }
+  .brand {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    padding: 7px 8px 10px !important;
+    margin: 0 !important;
+    border-bottom: 1px solid rgba(255,255,255,.15) !important;
+    text-align: left !important;
+  }
+  .brand-logo, .logo {
+    width: 44px !important; height: 44px !important;
+    flex: 0 0 44px !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+  }
+  .brand-title { font-size: 16px !important; margin: 0 !important; }
+  .brand-subtitle, .brand-sub { font-size: 9px !important; margin: 2px 0 0 !important; }
+  .brand > div { min-width: 0; }
+
+  .menu-title {
+    padding: 8px 6px 5px !important;
+    font-size: 9px !important;
+  }
+  .menu, .sidebar > nav {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 2px 1px 4px !important;
+  }
+  .menu::-webkit-scrollbar, .sidebar > nav::-webkit-scrollbar { display:none; }
+  .sidebar > .menu-item { display: inline-flex !important; width: auto !important; vertical-align: top !important; }
+  .menu-item, .menu a {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    padding: 9px 11px !important;
+    border-radius: 9px !important;
+    font-size: 11px !important;
+  }
+  .menu-icon, .icon { width: auto !important; font-size: 14px !important; }
+
+  /* Area utama */
+  .main { margin-left: 0 !important; min-height: 0 !important; width: 100% !important; }
+  .topbar, .top {
+    height: auto !important;
+    min-height: 56px !important;
+    padding: 10px 14px !important;
+    gap: 8px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+  }
+  .page-title, .title, .top b { font-size: 16px !important; }
+  .admin-info, .user, .teacher { gap: 6px !important; }
+  .admin-text, .usertext, .teacher-text { display: none !important; }
+  .avatar { width: 34px !important; height: 34px !important; }
+  .content { padding: 14px !important; max-width: none !important; width: 100% !important; }
+  .heading h1, .head h1 { font-size: 20px !important; }
+  .heading p, .head p, .sub { font-size: 11px !important; }
+
+  /* Kartu dan grid */
+  .content, .card, .welcome, .stat { max-width: 100% !important; }
+  .grid, .cards, .children, .stats, .levels, .print-info, .print-columns {
+    grid-template-columns: 1fr !important;
+  }
+  .card { padding: 15px !important; border-radius: 12px !important; }
+  .stat { padding: 14px !important; }
+
+  /* Form agar nyaman disentuh */
+  input, select, textarea, button, .btn, .view {
+    max-width: 100% !important;
+  }
+  input, select { min-height: 44px !important; }
+  textarea { min-height: 120px; }
+  button, .btn, .view { min-height: 42px !important; }
+  .actions { flex-direction: column !important; align-items: stretch !important; }
+  .actions > * { width: 100% !important; }
+
+  /* Tabel tidak merusak layar; bisa digeser ke samping */
+  table, .table { display: block !important; width: 100% !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+  table { white-space: nowrap !important; }
+  th, td, .table th, .table td { padding: 10px 8px !important; font-size: 11px !important; }
+
+  /* Upload / preview foto */
+  .preview, .photo-grid, .modal-photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px !important; }
+  .preview .item img, .item img { height: 105px !important; }
+  .photo-card img { height: 125px !important; }
+
+  /* Modal laporan */
+  .modal { padding: 8px !important; }
+  .modalbox { width: 100% !important; max-width: 100% !important; max-height: 94vh !important; padding: 14px !important; border-radius: 14px !important; }
+  .modalhead { gap: 8px !important; }
+  .modal-actions { width: 100%; }
+  .modal-actions button { flex: 1 1 100%; }
+
+  /* Buku penghubung */
+  .student-name { font-size: 17px !important; }
+  .activity, .journal-section, .report-card { padding: 13px !important; }
+  .attitudes { gap: 6px !important; }
+  .att { width: 100% !important; }
+
+  /* Jangan ubah ukuran foto yang sudah disepakati pada hasil cetak */
+  .print-sheet { width: 100% !important; max-width: 100% !important; }
+}
+
+@media (max-width: 380px) {
+  .preview, .photo-grid, .modal-photo-grid { grid-template-columns: 1fr !important; }
+  .content { padding: 10px !important; }
+  .topbar, .top { padding: 9px 10px !important; }
+  .brand-title { font-size: 14px !important; }
+}
+
+</style>
 
 </head>
 
@@ -1734,14 +1872,6 @@
                             onclick="openEdit('${teacher.id}')"
                         >
                             ✏️ Edit
-                        </button>
-
-                        <button
-                            class="btn-edit"
-                            style="margin-left:6px;"
-                            onclick="window.location.href='penugasan-guru.html'"
-                        >
-                            👧 Siswa Diampu
                         </button>
 
                     </td>
