@@ -185,7 +185,7 @@ function renderChildren(){
 }
 async function loadReports(){
  const ids=childrenData.map(x=>x.id);if(!ids.length){document.getElementById("reports").innerHTML='<div class="empty">Belum ada Buku Penghubung.</div>';return}
- const {data,error}=await sb.from("reports").select("id,student_id,teacher_id,learning_date,program,subject,learning_material,learning_activity,activity_level,child_attitude,teacher_note,status,sent_at,created_at,profiles!reports_teacher_id_fkey(full_name)").in("student_id",ids).eq("status","sent").order("learning_date",{ascending:false});
+ const {data,error}=await sb.from("reports").select("id,student_id,teacher_id,teacher_name,learning_date,program,subject,learning_material,learning_activity,activity_level,child_attitude,teacher_note,status,sent_at,created_at,profiles!reports_teacher_id_fkey(full_name)").in("student_id",ids).eq("status","sent").order("learning_date",{ascending:false});
  if(error){console.error(error);document.getElementById("reports").innerHTML='<div class="empty">Laporan belum dapat dimuat.</div>';return}
  reportsData=(data||[]).map(r=>{
    if(Array.isArray(r.profiles)) r.profiles=r.profiles[0]||null;
@@ -250,28 +250,19 @@ function filterChild(id){renderReports(reportsData.filter(r=>r.student_id===id))
 async function openReport(id){
  const r=reportsData.find(x=>x.id===id);if(!r)return;
  const st=childrenData.find(x=>x.id===r.student_id);
- let teacher=(r.profiles?.full_name||"").trim();
+ let teacher="";
+ // Utamakan profil Guru berdasarkan teacher_id agar laporan lama yang pernah
+ // menyimpan nama default tetap mengikuti nama akun Guru yang sebenarnya.
+ if(r.profiles?.full_name) teacher=r.profiles.full_name.trim();
 
- // Ambil nama guru langsung dari profiles berdasarkan teacher_id.
- if(!teacher || teacher.toLowerCase()==="guru"){
-   if(r.teacher_id){
-     const {data:tp,error:te}=await sb.from("profiles")
-       .select("full_name,role").eq("id",r.teacher_id).maybeSingle();
-     if(!te && tp?.role==="guru" && tp.full_name?.trim()) teacher=tp.full_name.trim();
-   }
+ // Cadangan jika relasi profiles tidak terbaca oleh akun orang tua.
+ if(!teacher && r.teacher_id){
+   const {data:tp,error:te}=await sb.from("profiles").select("full_name,role").eq("id",r.teacher_id).maybeSingle();
+   if(!te && tp?.role==="guru" && tp.full_name?.trim()) teacher=tp.full_name.trim();
  }
-
- // Pada data lama, profil Guru masih tersimpan dengan nama default "Guru".
- // Untuk laporan yang dibuat oleh akun Guru Ina, tampilkan nama yang benar.
- if(!teacher || teacher.toLowerCase()==="guru"){
-   if(r.teacher_id==="7eda578a-e338-4bc3-8b0e-4fb45aace3b4") teacher="Ina";
- }
+ // Terakhir gunakan nama yang tersimpan pada laporan.
+ if(!teacher) teacher=(r.teacher_name||"").trim();
  if(!teacher) teacher="Guru";
-
- // Data laporan lama masih menggunakan label default "Guru".
- // Karena laporan ini berasal dari akun Guru Ina pada aplikasi ini,
- // normalisasi label lama menjadi nama Guru yang benar.
- if(teacher.toLowerCase()==="guru") teacher="Ina";
 
  const c=st?.classes;
  const program=c?(c.program?c.name+" ("+c.program+")":c.name):(r.program||"-");

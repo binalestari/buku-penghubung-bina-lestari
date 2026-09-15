@@ -102,7 +102,7 @@ async function init(){
  teacherId=p.id;
 
  // Gunakan nama profil. Jika masih berupa nama default "Guru",
- // ambil nama dari metadata akun login (akun Ina) dan sinkronkan ke profil.
+ // ambil nama dari metadata akun login (akun Guru) dan sinkronkan ke profil.
  let guruName=(p.full_name||"").trim();
  const metaName=(session.user.user_metadata?.full_name||"").trim();
  if(!guruName || guruName.toLowerCase()==="guru") guruName=metaName;
@@ -169,7 +169,7 @@ async function save(status){
    const payload={
      student_id:studentId,
      teacher_id:teacherId,
-     teacher_name:document.getElementById("teacherDisplay").value.trim() || "Ina",
+     teacher_name:document.getElementById("teacherDisplay").value.trim() || guruName || "Guru",
      learning_date:date,
      program:val("program"),
      subject:"Kegiatan Harian",
@@ -202,8 +202,8 @@ async function save(status){
    if(result.error) throw result.error;
 
    alert(status==="sent"
-     ?"Buku Penghubung berhasil disimpan dan dikirim ke orang tua.\nGuru: "+(document.getElementById("teacherDisplay").value.trim()||"Ina")
-     :"Buku Penghubung berhasil disimpan sebagai draft.\nGuru: "+(document.getElementById("teacherDisplay").value.trim()||"Ina"));
+     ?"Buku Penghubung berhasil disimpan dan dikirim ke orang tua.\nGuru: "+(document.getElementById("teacherDisplay").value.trim()||"Guru")
+     :"Buku Penghubung berhasil disimpan sebagai draft.\nGuru: "+(document.getElementById("teacherDisplay").value.trim()||"Guru"));
 
    window.location.href="dashboard-guru.html";
  }catch(e){
